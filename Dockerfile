@@ -1,9 +1,9 @@
-FROM nginx:stable-alpine
-LABEL maintainer="marciosferreira@yahoo.com.br"
+FROM python:3.11-slim
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY . /usr/share/nginx/html
+WORKDIR /app
+
+COPY . .
 
 EXPOSE 8000
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["python", "-m", "http.server", "8000", "--directory", "/app"]
