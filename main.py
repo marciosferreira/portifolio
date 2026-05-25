@@ -85,7 +85,8 @@ async def chat(req: ChatRequest):
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_INSTRUCTION,
                     temperature=0.4,
-                    max_output_tokens=800,
+                    max_output_tokens=2000,
+                    thinking_config=types.ThinkingConfig(thinking_level="minimal"),
                 ),
             )
             for chunk in stream:

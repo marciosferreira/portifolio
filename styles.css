@@ -772,6 +772,20 @@ a:hover { text-decoration: underline }
   pointer-events: auto;
 }
 
+.chat-panel.expanded {
+  width: min(820px, calc(100vw - 32px));
+  height: min(820px, calc(100vh - 48px));
+}
+
+@media (max-width: 600px) {
+  .chat-panel.expanded {
+    width: calc(100vw - 16px);
+    height: calc(100vh - 32px);
+    bottom: 16px;
+    right: 8px;
+  }
+}
+
 .chat-header {
   display: flex;
   align-items: center;
@@ -826,18 +840,32 @@ a:hover { text-decoration: underline }
   box-shadow: 0 0 8px var(--accent);
 }
 
-.chat-close {
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chat-icon-btn {
   background: transparent;
   border: none;
   color: var(--muted);
-  font-size: 26px;
+  font-size: 16px;
   line-height: 1;
   cursor: pointer;
-  padding: 0 6px;
-  transition: color .15s;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: color .15s, background .15s, transform .15s;
 }
 
-.chat-close:hover { color: var(--text); }
+.chat-icon-btn:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.06);
+}
+
+.chat-close { font-size: 22px; padding: 2px 8px 4px; }
+
+.chat-panel.expanded #chat-expand { transform: rotate(180deg); color: var(--accent); }
 
 .chat-messages {
   flex: 1;

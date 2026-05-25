@@ -411,7 +411,10 @@ graph TD
         <div class="chat-subtitle"><span class="chat-status-dot"></span> Online · responde por IA</div>
       </div>
     </div>
-    <button id="chat-close" class="chat-close" type="button" aria-label="Fechar chat">×</button>
+    <div class="chat-header-actions">
+      <button id="chat-expand" class="chat-icon-btn" type="button" aria-label="Expandir chat" title="Expandir">⛶</button>
+      <button id="chat-close" class="chat-icon-btn chat-close" type="button" aria-label="Fechar chat" title="Fechar">×</button>
+    </div>
   </div>
   <div id="chat-messages" class="chat-messages"></div>
   <form id="chat-form" class="chat-form" autocomplete="off">
@@ -472,6 +475,7 @@ graph TD
         const toggle = document.getElementById('chat-toggle');
         const panel = document.getElementById('chat-panel');
         const closeBtn = document.getElementById('chat-close');
+        const expandBtn = document.getElementById('chat-expand');
         const messages = document.getElementById('chat-messages');
         const form = document.getElementById('chat-form');
         const input = document.getElementById('chat-input');
@@ -544,6 +548,13 @@ graph TD
 
         toggle.addEventListener('click', openPanel);
         closeBtn.addEventListener('click', closePanel);
+
+        expandBtn.addEventListener('click', () => {
+          const expanded = panel.classList.toggle('expanded');
+          expandBtn.setAttribute('aria-label', expanded ? 'Recolher chat' : 'Expandir chat');
+          expandBtn.setAttribute('title', expanded ? 'Recolher' : 'Expandir');
+          scrollToBottom();
+        });
 
         async function send(question) {
           if (sending) return;
