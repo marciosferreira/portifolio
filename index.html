@@ -31,6 +31,22 @@
   </head>
   <body>
 
+    <!-- ── TOP BAR ─────────────────────────────────────────────────────── -->
+    <nav class="topbar" aria-label="Navegação principal">
+      <a href="#sec-about" class="topbar-brand">
+        <span class="topbar-brand-bracket">&lt;</span>marcio<span class="topbar-brand-accent">-ferreira</span><span class="topbar-brand-bracket">/&gt;</span>
+      </a>
+      <div class="topbar-nav">
+        <a href="#sec-about" class="topbar-link topbar-link-optional">about</a>
+        <a href="#sec-exp" class="topbar-link">experiência</a>
+        <a href="#sec-edu" class="topbar-link topbar-link-optional">formação</a>
+        <a href="#sec-arch" class="topbar-link">arquitetura</a>
+        <a href="#sec-proj" class="topbar-link">projetos</a>
+        <a href="#sec-videos" class="topbar-link">vídeos</a>
+        <a href="mailto:marciosferreira@yahoo.com.br" class="topbar-cta">contato</a>
+      </div>
+    </nav>
+
     <!-- ── GRAPH SIDEBAR NAV ─────────────────────────────────────────── -->
     <aside class="graph-nav" aria-label="Navegação">
       <div class="graph-nav-label">_state_graph</div>
@@ -662,7 +678,7 @@ graph TD
         window.addEventListener('resize', onScroll);
         updateActive();
 
-        document.querySelectorAll('.graph-nav a').forEach(a => {
+        document.querySelectorAll('.graph-nav a, .topbar-nav a, .topbar-brand').forEach(a => {
           a.addEventListener('click', (e) => {
             const id = a.getAttribute('href').slice(1);
             const target = document.getElementById(id);

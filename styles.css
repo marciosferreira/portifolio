@@ -15,6 +15,7 @@
 body {
   font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
   margin: 0;
+  padding-top: 56px;
   background:
     radial-gradient(ellipse at 15% 0%, rgba(110,231,183,0.07) 0%, transparent 50%),
     radial-gradient(ellipse at 85% 10%, rgba(99,102,241,0.05) 0%, transparent 40%),
@@ -22,6 +23,97 @@ body {
   background-attachment: fixed;
   color: var(--text);
   line-height: 1.6;
+}
+
+[id^="sec-"] { scroll-margin-top: 72px; }
+
+/* ── TOP BAR ────────────────────────────────────────────────────────── */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(7,17,39,0.72);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.topbar-brand {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  transition: opacity .15s;
+}
+
+.topbar-brand:hover { opacity: 0.85; text-decoration: none; }
+
+.topbar-brand-accent { color: var(--accent); }
+.topbar-brand-bracket { color: var(--muted); font-weight: 500; }
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.topbar-link {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color .15s, background .15s;
+}
+
+.topbar-link:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.05);
+  text-decoration: none;
+}
+
+.topbar-cta {
+  margin-left: 10px;
+  background: var(--accent);
+  color: #071127;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity .15s, transform .15s;
+}
+
+.topbar-cta:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .topbar-link-optional { display: none; }
+}
+
+@media (max-width: 760px) {
+  .topbar { padding: 0 14px; }
+  .topbar-link { padding: 6px 8px; font-size: 11px; }
+  .topbar-cta { padding: 6px 12px; margin-left: 6px; }
+}
+
+@media (max-width: 520px) {
+  .topbar-link { display: none; }
+  .topbar-brand { font-size: 13px; }
 }
 
 a { color: var(--accent); text-decoration: none }
