@@ -5,22 +5,63 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Marcio Ferreira — Cientista de Dados & IA Agêntica</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: 'dark',
+        securityLevel: 'loose',
+        flowchart: { nodeSpacing: 30, rankSpacing: 50, curve: 'basis' },
+        themeVariables: {
+          fontSize: '13px',
+          fontFamily: 'Inter, sans-serif',
+          background: '#0B0F19',
+          mainBkg: '#1E293B',
+          nodeBorder: '#475569',
+          clusterBkg: '#0f1520',
+          clusterBorder: '#1e293b',
+          titleColor: '#F8FAFC',
+          edgeLabelBackground: '#0B0F19',
+          lineColor: '#475569'
+        }
+      });
+    </script>
   </head>
   <body>
 
+    <!-- ── GRAPH SIDEBAR NAV ─────────────────────────────────────────── -->
+    <aside class="graph-nav" aria-label="Navegação">
+      <div class="graph-nav-label">_state_graph</div>
+      <ul>
+        <li data-section="sec-about"><a href="#sec-about">about</a></li>
+        <li data-section="sec-exp"><a href="#sec-exp">experiência</a></li>
+        <li data-section="sec-edu"><a href="#sec-edu">formação</a></li>
+        <li data-section="sec-arch"><a href="#sec-arch">arquitetura</a></li>
+        <li data-section="sec-proj"><a href="#sec-proj">projetos</a></li>
+        <li data-section="sec-videos"><a href="#sec-videos">vídeos</a></li>
+      </ul>
+    </aside>
+
     <!-- ── ABOUT / HERO ──────────────────────────────────────────────── -->
-    <header class="site-header">
+    <header class="site-header" id="sec-about">
       <div class="container about-grid">
         <div class="about-text">
+          <div class="terminal-boot" aria-hidden="true">
+            <div class="boot-line">&gt; agent.boot()</div>
+            <div class="boot-line">&gt; loading_context('marcio_ferreira')</div>
+            <div class="boot-line">&gt; 20 publications · 10 years · production systems</div>
+            <div class="boot-line">&gt; ready.<span class="boot-cursor">▌</span></div>
+          </div>
           <p class="about-label">Cientista de Dados Sênior · Ph.D.</p>
           <h1>Marcio Ferreira</h1>
-          <p class="about-title">Especialista em IA Agêntica — LangGraph & AWS</p>
+          <p class="hero-hook">Agentes autônomos que operam em produção —<br>do LangGraph à linha de fábrica.</p>
+          <p class="about-title">LangGraph · AWS Bedrock · MCP Servers</p>
           <p class="about-summary">
-            Unifico mais de 10 anos de rigor científico — entre EMBL-EBI Cambridge e INPA — com
-            implementação industrial de sistemas de IA. Projeto e coloco em produção arquiteturas
-            multi-agente com <strong>LangGraph</strong>, <strong>AWS Bedrock</strong> e <strong>MCP Servers</strong>,
-            com histórico comprovado de redução de 30–50% no consumo de tokens e observabilidade
-            completa via Langfuse/LangSmith. Autor de ~20 publicações indexadas.
+            10 anos de rigor científico — EMBL-EBI Cambridge e INPA — aplicados à engenharia de IA
+            industrial. Projeto e coloco em produção arquiteturas multi-agente com <strong>LangGraph</strong>,
+            <strong>AWS Bedrock</strong> e <strong>MCP Servers</strong>: 30–50% menos tokens em produção,
+            observabilidade completa via Langfuse/LangSmith, agentes que substituem trabalho manual real.
+            Autor de ~20 publicações indexadas.
           </p>
           <div class="about-links">
             <a href="https://www.linkedin.com/in/marcio-soares-ferreira" target="_blank" rel="noopener" class="btn">LinkedIn</a>
@@ -58,7 +99,7 @@
     <main class="container">
 
       <!-- ── EXPERIENCE TIMELINE ────────────────────────────────────── -->
-      <section class="section">
+      <section class="section" id="sec-exp">
         <h2 class="section-title">Experiência</h2>
         <div class="timeline">
 
@@ -131,7 +172,7 @@
       </section>
 
       <!-- ── EDUCATION ──────────────────────────────────────────────── -->
-      <section class="section">
+      <section class="section" id="sec-edu">
         <h2 class="section-title">Formação</h2>
         <div class="edu-grid">
           <div class="edu-item">
@@ -157,8 +198,114 @@
         </div>
       </section>
 
+      <!-- ── ARCHITECTURE ───────────────────────────────────────────── -->
+      <section class="section" id="sec-arch">
+        <p class="about-label" style="margin-bottom:8px">Highlight · Projeto recente</p>
+        <h2 class="section-title">Agente que automatiza o trabalho de gerentes de manufatura</h2>
+        <p class="section-sub">
+          Construído com <strong>LangChain</strong> e <strong>LangGraph</strong>, este sistema substitui rotinas manuais de
+          gerentes industriais — análise de telemetria, geração de relatórios, agendamento de tarefas recorrentes e alertas —
+          por um <strong>orquestrador multi-agente</strong> que conversa em linguagem natural, escreve e versiona código
+          Python sob demanda, e executa tudo de forma autônoma em sandbox isolado.
+          Demo ao vivo: <a href="https://interview-demo-industry.b60gda.easypanel.host/" target="_blank" rel="noopener">Industry Control →</a>
+        </p>
+
+        <div class="arch-card" id="mermaid-graph-wrap" onclick="_openMermaidModal()" title="Clique para ampliar">
+          <div class="arch-zoom-hint">⤢ ampliar</div>
+          <div class="mermaid-wrap">
+            <div class="mermaid">
+graph TD
+    User([Usuário])
+
+    User --> Orch
+
+    subgraph Orch[Orquestrador]
+        OT["⚡ LLM decide qual tool chamar<br/>────────────────────────────<br/>data e hora · calcular período · buscar contexto<br/>delegar análise · exportar PDF · exportar Excel<br/>gerenciar agenda · ver código de tarefa<br/>criar tarefa agendada · editar tarefa agendada"]
+    end
+
+    Orch -->|"resposta em texto<br/>via SSE / chat"| User
+    Orch -->|"delega análise"| ANA
+    ANA -->|"texto · gráficos · PDF · Excel"| Orch
+    Orch -->|"listar / pausar / deletar"| SCH
+    subgraph ANA[Sub-Agente Analista]
+        AT["⚡ LLM decide qual tool chamar<br/>────────────────────────────<br/>ler instruções da skill · buscar dados via API<br/>consultar SQL · analisar dados<br/>exportar PDF · exportar Excel<br/>coleta contexto estruturado para agendamento<br/>(skill · endpoint · colunas · amostra · tipo de saída)"]
+    end
+
+    subgraph SG["SchedulingGraph  ⟨StateGraph determinístico⟩"]
+        SG1["⚡ criar tarefa<br/>(infere nome, frequência e horário via LLM<br/>registra no banco)"] --> SG2["consultar dados<br/>(aciona o Analista · coleta dados reais da API)"]
+        SG2 --> SG_G["⚡ gerar código<br/>(LLM escreve o script da tarefa<br/>com base nos dados reais)"]
+        SG_G --> SG3["testar código<br/>(executa em ambiente isolado)"]
+        SG_E["⚡ editar código<br/>(LLM lê o script atual<br/>e aplica a modificação)"] --> SG3
+        SG3 -->|"erro · até 3 tentativas"| SG4["⚡ corrigir código<br/>(LLM corrige com base no erro real<br/>remove imports bloqueados)"]
+        SG4 --> SG3
+        SG3 -->|"ok"| SG5["salvar código<br/>(versiona e persiste no banco)"]
+        SG5 --> SG6["retornar resultado<br/>(devolve confirmação ao Orquestrador)"]
+    end
+
+    subgraph SCH[Sub-Agente Scheduling]
+        ST["⚡ LLM decide qual tool chamar<br/>────────────────────────────<br/>criar tarefa · editar tarefa<br/>excluir tarefa · pausar / retomar<br/>listar tarefas · definir instruções · ver instruções<br/>histórico de versões do código · restaurar versão"]
+    end
+
+    OT -->|"criar tarefa agendada"| SG1
+    OT -->|"editar tarefa agendada"| SG_E
+    SG2 -->|"coleta dados para o script"| AT
+    AT -->|"endpoint · colunas · amostra de dados"| SG2
+    SG5 -->|"persiste script versionado"| DB[("mfg.db<br/>SQLite · persistência")]
+    SCH -->|lê / escreve| DB
+    SG6 -->|confirmação| OT
+
+    DB -->|"tarefa ativa com execução pendente"| DAEMON
+
+    subgraph DAEMON["Daemon · verifica a cada 60s"]
+        RUNNER["executa tarefas agendadas<br/>em ambiente isolado e seguro"]
+    end
+
+    DAEMON -->|"registra execução e agenda próxima"| DB
+    RUNNER -->|"gráficos · PDFs · Excel<br/>alertas por e-mail<br/>notificações via ctx.notify()<br/>qualquer ctx.api()"| User
+
+    subgraph LEG["Legenda"]
+        L1["⚡ nó chama o LLM<br/>(borda amarela)"] ~~~ L2["nó determinístico<br/>(borda verde)"]
+        L3["⚡ sub-agente ReAct<br/>(fundo lilás · borda amarela)"] ~~~ L4["grafo de fluxo fixo<br/>(fundo verde · sequência predefinida)"]
+    end
+
+    classDef legend fill:#111827,stroke:#4ade80,stroke-width:1.5px,color:#9CA3AF,font-style:italic;
+    classDef legendllm fill:#111827,stroke:#facc15,stroke-width:2px,color:#9CA3AF,font-style:italic;
+    classDef legendagent fill:#312E81,stroke:#facc15,stroke-width:2px,color:#c4b5fd,font-style:italic;
+    classDef legendsg fill:#1e3a1e,stroke:#4ade80,stroke-width:1.5px,color:#bbf7d0,font-style:italic;
+    class L2 legend;
+    class L1 legendllm;
+    class L3 legendagent;
+    class L4 legendsg;
+
+    classDef default fill:#1E293B,stroke:#475569,stroke-width:1px,color:#F8FAFC;
+    classDef agent fill:#312E81,stroke:#6366F1,stroke-width:1px,color:#E0E7FF;
+    classDef agentllm fill:#312E81,stroke:#facc15,stroke-width:2px,color:#E0E7FF;
+    classDef sg fill:#1e3a1e,stroke:#4ade80,stroke-width:1.5px,color:#bbf7d0;
+    classDef sgllm fill:#1e3a1e,stroke:#facc15,stroke-width:2px,color:#bbf7d0;
+    classDef storage fill:#0F2027,stroke:#0EA5E9,stroke-width:1px,color:#7DD3FC;
+    classDef daemon fill:#0c1a2e,stroke:#38BDF8,stroke-width:1.5px,color:#7DD3FC;
+    classDef user fill:#1a2535,stroke:#38BDF8,stroke-width:2px,color:#E0F2FE,font-weight:bold;
+    class Orch,ANA,SCH agent;
+    class OT,AT,ST agentllm;
+    class SG,SG2,SG3,SG5,SG6 sg;
+    class SG1,SG_G,SG_E,SG4 sgllm;
+    class DB storage;
+    class DAEMON daemon;
+    class User user;
+            </div>
+          </div>
+        </div>
+        <p class="arch-caption">
+          O <strong>Orquestrador</strong> roteia pedidos para dois sub-agentes ReAct — <strong>Analista</strong>
+          (análise ad-hoc, gráficos, PDFs, Excel) e <strong>Scheduling</strong> (CRUD de tarefas agendadas). Um
+          <strong>StateGraph determinístico</strong> escreve, testa em sandbox e versiona o código Python das tarefas,
+          com auto-correção de até 3 tentativas. Um <strong>Daemon</strong> verifica e executa as tarefas a cada 60s.
+          Persistência em SQLite, streaming via SSE, observabilidade via Langfuse.
+        </p>
+      </section>
+
       <!-- ── PROJECTS ───────────────────────────────────────────────── -->
-      <section class="section">
+      <section class="section" id="sec-proj">
         <h2 class="section-title">Projetos em Destaque</h2>
         <p class="section-sub">Agentes de IA — projetos recentes em produção</p>
 
@@ -205,9 +352,129 @@
         </div>
       </section>
 
+      <!-- ── VIDEOS ────────────────────────────────────────────────── -->
+      <section class="section" id="sec-videos">
+        <h2 class="section-title">Vídeos Técnicos</h2>
+        <p class="section-sub">LangGraph, LangChain e IA agêntica na prática — <a href="https://www.youtube.com/@dr.marcio-ferreira" target="_blank" rel="noopener">canal no YouTube →</a></p>
+        <div class="videos-grid">
+          <a href="https://youtu.be/WNO4oMGtYOM" target="_blank" rel="noopener" class="video-card">
+            <div class="video-thumb">
+              <img src="https://img.youtube.com/vi/WNO4oMGtYOM/maxresdefault.jpg" alt="Entendendo o LangChain de verdade, e sem tutorial" />
+              <span class="video-play">▶</span>
+            </div>
+            <p class="video-title">Entendendo o LangChain de verdade, e sem tutorial</p>
+          </a>
+          <a href="https://youtu.be/N-mFfjFTH2k" target="_blank" rel="noopener" class="video-card">
+            <div class="video-thumb">
+              <img src="https://img.youtube.com/vi/N-mFfjFTH2k/maxresdefault.jpg" alt="Como um Editor de Código com IA Funciona por Dentro" />
+              <span class="video-play">▶</span>
+            </div>
+            <p class="video-title">Como um Editor de Código com IA Funciona por Dentro</p>
+          </a>
+          <a href="https://youtu.be/a2ZKkoedJp4" target="_blank" rel="noopener" class="video-card">
+            <div class="video-thumb">
+              <img src="https://img.youtube.com/vi/a2ZKkoedJp4/maxresdefault.jpg" alt="LangGraph - Os 7 conceitos que você precisa saber" />
+              <span class="video-play">▶</span>
+            </div>
+            <p class="video-title">LangGraph — Os 7 conceitos que você precisa saber</p>
+          </a>
+          <a href="https://youtu.be/0FYTz2IsObc" target="_blank" rel="noopener" class="video-card">
+            <div class="video-thumb">
+              <img src="https://img.youtube.com/vi/0FYTz2IsObc/maxresdefault.jpg" alt="Orquestração de agentes de IA: do Loop React à produção" />
+              <span class="video-play">▶</span>
+            </div>
+            <p class="video-title">Orquestração de agentes de IA: do Loop ReAct à produção</p>
+          </a>
+        </div>
+      </section>
+
+
       <footer class="footer">
         <p>Interessado em colaborar? <a href="mailto:marciosferreira@yahoo.com.br">marciosferreira@yahoo.com.br</a> · <a href="https://www.linkedin.com/in/marcio-soares-ferreira" target="_blank" rel="noopener">LinkedIn</a></p>
       </footer>
     </main>
+
+    <!-- Modal: Grafo ampliado -->
+    <div id="mermaid-modal" class="mermaid-modal" onclick="_closeMermaidModalBackdrop(event)">
+      <div class="mermaid-modal-box">
+        <div class="mermaid-modal-header">
+          <span>Grafo Multi-Agente (LangGraph)</span>
+          <button onclick="_closeMermaidModal()" title="Fechar (Esc)">×</button>
+        </div>
+        <div id="mermaid-modal-content" class="mermaid-modal-content"></div>
+      </div>
+    </div>
+
+    <script>
+      function _openMermaidModal() {
+        const modal = document.getElementById('mermaid-modal');
+        const content = document.getElementById('mermaid-modal-content');
+        const srcSvg = document.querySelector('#mermaid-graph-wrap .mermaid svg');
+        if (srcSvg) {
+          const clone = srcSvg.cloneNode(true);
+          clone.removeAttribute('width');
+          clone.removeAttribute('height');
+          clone.style.cssText = 'width:100%;height:auto;max-width:none;display:block;';
+          content.innerHTML = '';
+          content.appendChild(clone);
+        }
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      function _closeMermaidModal() {
+        document.getElementById('mermaid-modal').style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      function _closeMermaidModalBackdrop(e) {
+        if (e.target === document.getElementById('mermaid-modal')) _closeMermaidModal();
+      }
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('mermaid-modal').style.display === 'flex') {
+          _closeMermaidModal();
+        }
+      });
+
+      // Graph sidebar — scroll-spy + smooth scroll
+      (function() {
+        const items = document.querySelectorAll('.graph-nav li');
+        const sections = Array.from(document.querySelectorAll('[id^="sec-"]'));
+        if (!items.length || !sections.length) return;
+
+        let ticking = false;
+        function updateActive() {
+          const triggerY = window.innerHeight * 0.30;
+          let activeId = sections[0].id;
+          for (const s of sections) {
+            if (s.getBoundingClientRect().top <= triggerY) activeId = s.id;
+          }
+          items.forEach(li => {
+            li.classList.toggle('active', li.dataset.section === activeId);
+          });
+          ticking = false;
+        }
+
+        function onScroll() {
+          if (!ticking) {
+            requestAnimationFrame(updateActive);
+            ticking = true;
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        updateActive();
+
+        document.querySelectorAll('.graph-nav a').forEach(a => {
+          a.addEventListener('click', (e) => {
+            const id = a.getAttribute('href').slice(1);
+            const target = document.getElementById(id);
+            if (target) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
