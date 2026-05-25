@@ -113,7 +113,7 @@ principais institutos de bioinformática do mundo.
 - **Ph.D. em Biologia Computacional** — INPA (2011 – 2015)
 - **Mestrado em Biologia Computacional** — INPA (2004 – 2006)
 - **Bacharelado em Ciências Biológicas** — UNIARA (1999 – 2003)
-- **Pós-graduação em Ciência de Dados & Inteligência Artificial** — Estácio (2024 – 2026)
+- **Tecnólogo em Ciência de Dados** — Estácio (2024 – 2026)
 
 ---
 
