@@ -1,5 +1,6 @@
 .git
 .vscode
+nginx.conf
 node_modules
 *.log
 *.tmp
