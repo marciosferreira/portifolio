@@ -3,68 +3,210 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Portfólio — Agentes de IA & Visão Computacional</title>
+    <title>Marcio Ferreira — Cientista de Dados & IA Agêntica</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+
+    <!-- ── ABOUT / HERO ──────────────────────────────────────────────── -->
     <header class="site-header">
-      <div class="container">
-        <h1>Portfólio</h1>
-        <p class="tagline">Trabalho focado em agentes de IA (LangChain). Também tenho experiência em visão computacional.</p>
+      <div class="container about-grid">
+        <div class="about-text">
+          <p class="about-label">Cientista de Dados Sênior · Ph.D.</p>
+          <h1>Marcio Ferreira</h1>
+          <p class="about-title">Especialista em IA Agêntica — LangGraph & AWS</p>
+          <p class="about-summary">
+            Unifico mais de 10 anos de rigor científico — entre EMBL-EBI Cambridge e INPA — com
+            implementação industrial de sistemas de IA. Projeto e coloco em produção arquiteturas
+            multi-agente com <strong>LangGraph</strong>, <strong>AWS Bedrock</strong> e <strong>MCP Servers</strong>,
+            com histórico comprovado de redução de 30–50% no consumo de tokens e observabilidade
+            completa via Langfuse/LangSmith. Autor de ~20 publicações indexadas.
+          </p>
+          <div class="about-links">
+            <a href="https://www.linkedin.com/in/marcio-soares-ferreira" target="_blank" rel="noopener" class="btn">LinkedIn</a>
+            <a href="https://github.com/marciosferreira" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+            <a href="mailto:marciosferreira@yahoo.com.br" class="btn btn-ghost">E-mail</a>
+          </div>
+        </div>
+
+        <!-- Stack pills -->
+        <div class="stack-panel">
+          <p class="panel-label">Stack principal</p>
+          <div class="stack-grid">
+            <span class="pill">LangChain</span>
+            <span class="pill">LangGraph</span>
+            <span class="pill">MCP Servers</span>
+            <span class="pill">AWS Bedrock</span>
+            <span class="pill">FAISS</span>
+            <span class="pill">Llama (on-premise)</span>
+            <span class="pill">Langfuse</span>
+            <span class="pill">LangSmith</span>
+            <span class="pill">Python</span>
+            <span class="pill">SQL</span>
+            <span class="pill">OpenCV</span>
+            <span class="pill">Scikit-Learn</span>
+          </div>
+          <p class="panel-label" style="margin-top:20px">Idiomas</p>
+          <div class="stack-grid">
+            <span class="pill pill-muted">Português — nativo</span>
+            <span class="pill pill-muted">English — profissional</span>
+          </div>
+        </div>
       </div>
     </header>
 
     <main class="container">
-      <section class="intro">
-        <h2>Destaque — Agentes de IA</h2>
-        <p>Os projetos abaixo são os mais recentes e estão totalmente focados em agentes de IA (LangChain, orquestração, prompts e pipelines de RAG).</p>
+
+      <!-- ── EXPERIENCE TIMELINE ────────────────────────────────────── -->
+      <section class="section">
+        <h2 class="section-title">Experiência</h2>
+        <div class="timeline">
+
+          <div class="tl-item">
+            <div class="tl-meta">
+              <span class="tl-date">Jul 2025 — presente</span>
+              <span class="tl-badge current">Atual</span>
+            </div>
+            <div class="tl-body">
+              <h3>Cientista de Dados</h3>
+              <p class="tl-company">FIT — Instituto de Tecnologia · Manaus, Brasil</p>
+              <ul>
+                <li>Arquitetura multi-agente com LangGraph para análise de telemetria industrial e dados estruturados de produção.</li>
+                <li>RAG com FAISS correlacionando métricas em tempo real com logs históricos, reduzindo alucinações em diagnósticos de falhas.</li>
+                <li>MCP Servers em Python desacoplando acesso a dados (SQL/NoSQL) da lógica dos modelos.</li>
+                <li>Engenharia de contexto avançada: redução de 30–50% no consumo de tokens na AWS Bedrock.</li>
+                <li>Observabilidade completa via Langfuse (tracing, benchmarking e avaliação qualitativa em produção).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-meta">
+              <span class="tl-date">Nov 2024 — Mai 2025</span>
+            </div>
+            <div class="tl-body">
+              <h3>Analista de Machine Learning</h3>
+              <p class="tl-company">Venturus · Manaus, Brasil</p>
+              <ul>
+                <li>Arquitetura RAG on-premise com LLMs locais (Llama quantizado) — zero exposição de dados a APIs externas.</li>
+                <li>Migração de pipelines lineares LangChain para sistemas stateful com LangGraph (memória, ramificações, recuperação de erros).</li>
+                <li>Observabilidade com LangSmith para tracing, debugging e evals em todo o fluxo generativo.</li>
+                <li>Busca semântica de alta escala com embeddings HuggingFace + FAISS sobre grandes corpora.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-meta">
+              <span class="tl-date">Fev 2021 — Fev 2024</span>
+            </div>
+            <div class="tl-body">
+              <h3>Cientista de Dados</h3>
+              <p class="tl-company">European Bioinformatics Institute (EMBL-EBI) · Cambridge, Reino Unido</p>
+              <ul>
+                <li>Algoritmos de object tracking e processamento digital de sinais em Python/OpenCV para detecção automatizada de frequência cardíaca em vídeos de alta resolução.</li>
+                <li>Pipelines escaláveis em infraestrutura Linux/HPC para análise de imagem biológica em larga escala.</li>
+                <li>Publicação no journal <em>Bioinformatics</em> (Oxford Academic) — <a href="https://doi.org/10.1093/bioinformatics/btae664" target="_blank" rel="noopener">doi:10.1093/bioinformatics/btae664</a>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-meta">
+              <span class="tl-date">Jan 2016 — Jan 2021</span>
+            </div>
+            <div class="tl-body">
+              <h3>Pesquisador Pós-Doutorado</h3>
+              <p class="tl-company">INPA — Instituto Nacional de Pesquisas da Amazônia · Manaus, Brasil</p>
+              <ul>
+                <li>Redes LSTM/RNN em TensorFlow/Keras para modelagem preditiva de séries temporais e classificação comportamental.</li>
+                <li>PCA e clustering para engenharia de features em dados biológicos de alta dimensionalidade.</li>
+                <li>Integração de sensores IoT com visão computacional em pipelines multimodais validados estatisticamente.</li>
+                <li>Publicação no periódico FACETS — <a href="https://dx.doi.org/10.1139/facets-2023-0221" target="_blank" rel="noopener">doi:10.1139/facets-2023-0221</a>.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
       </section>
 
-      <section class="projects">
-        <article class="project">
-          <img src="images/Captura%20de%20tela%202026-05-24%20221151.png" alt="Demo Industry Dashboard"/>
-          <div class="project-body">
-            <h3>Demo Industry Dashboard</h3>
-            <p>Demo de produção e inteligência para controle de manufatura, com agente conversacional que cria tarefas e monitora indicadores. Projeto recente com foco em agentes de IA para automação de processos e geração de código/ações via chat.</p>
-            <p><a href="https://interview-demo-industry.b60gda.easypanel.host/" target="_blank" rel="noopener">Ver demo</a></p>
+      <!-- ── EDUCATION ──────────────────────────────────────────────── -->
+      <section class="section">
+        <h2 class="section-title">Formação</h2>
+        <div class="edu-grid">
+          <div class="edu-item">
+            <span class="edu-degree">Ph.D.</span>
+            <span class="edu-field">Biologia Computacional</span>
+            <span class="edu-inst">INPA · 2011 – 2015</span>
           </div>
-        </article>
-
-        <article class="project">
-          <img src="images/Captura%20de%20tela%202026-05-24%20221215.png" alt="Acing Interviews"/>
-          <div class="project-body">
-            <h3>Acing Interviews</h3>
-            <p>Plataforma de simulação de entrevistas com agente de IA que gera perguntas específicas ao cargo, fornece feedback instantâneo (texto e voz) e cria scorecards personalizados. Trabalho centrado em pipelines de LangChain e avaliação automática.</p>
-            <p><a href="https://acinginterviews.com/" target="_blank" rel="noopener">Visitar o site</a></p>
+          <div class="edu-item">
+            <span class="edu-degree">Mestrado</span>
+            <span class="edu-field">Biologia Computacional</span>
+            <span class="edu-inst">INPA · 2004 – 2006</span>
           </div>
-        </article>
-
-        <section class="intro">
-          <h2>Visão Computacional</h2>
-          <p>Projetos de visão computacional que eu desenvolvi/colaborei — detecção de comportamento de peixes e trabalho publicado em revista científica.</p>
-        </section>
-
-        <article class="project">
-          <img src="images/Captura%20de%20tela%202026-05-24%20221434.png" alt="Fish Behaviour Detection"/>
-          <div class="project-body">
-            <h3>Fish Behaviour Detection</h3>
-            <p>Repositório com notebooks, scripts e um vídeo demonstrando análise de movimento e análise de cauda de peixes em aquários. Tecnologias: Python, Jupyter, análise de vídeo e processamento de sinais.</p>
-            <p><a href="https://github.com/marciosferreira/fish_behaviour_detection" target="_blank" rel="noopener">Ver no GitHub</a></p>
+          <div class="edu-item">
+            <span class="edu-degree">Bacharel</span>
+            <span class="edu-field">Ciências Biológicas</span>
+            <span class="edu-inst">UNIARA · 1999 – 2003</span>
           </div>
-        </article>
-
-        <article class="project">
-          <img src="images/Captura%20de%20tela%202026-05-24%20222134.png" alt="Artigo Bioinformatics"/>
-          <div class="project-body">
-            <h3>Publicação — Bioinformatics</h3>
-            <p>Trabalho relacionado a métodos de análise e bioinformática publicado na revista Bioinformatics. Veja a página da publicação para detalhes e contexto acadêmico.</p>
-            <p><a href="https://academic.oup.com/bioinformatics/article/40/12/btae664/7885156" target="_blank" rel="noopener">Ler artigo</a></p>
+          <div class="edu-item">
+            <span class="edu-degree">Pós-graduação</span>
+            <span class="edu-field">Ciência de Dados & IA</span>
+            <span class="edu-inst">Estácio · 2024 – 2026</span>
           </div>
-        </article>
+        </div>
+      </section>
+
+      <!-- ── PROJECTS ───────────────────────────────────────────────── -->
+      <section class="section">
+        <h2 class="section-title">Projetos em Destaque</h2>
+        <p class="section-sub">Agentes de IA — projetos recentes em produção</p>
+
+        <div class="projects">
+          <article class="project">
+            <img src="images/Captura%20de%20tela%202026-05-24%20221151.png" alt="Demo Industry Dashboard"/>
+            <div class="project-body">
+              <h3>Demo Industry Dashboard</h3>
+              <p>Demo de produção e inteligência para controle de manufatura, com agente conversacional que cria tarefas e monitora indicadores via chat.</p>
+              <p><a href="https://interview-demo-industry.b60gda.easypanel.host/" target="_blank" rel="noopener">Ver demo →</a></p>
+            </div>
+          </article>
+
+          <article class="project">
+            <img src="images/Captura%20de%20tela%202026-05-24%20221215.png" alt="Acing Interviews"/>
+            <div class="project-body">
+              <h3>Acing Interviews</h3>
+              <p>Plataforma de simulação de entrevistas com agente de IA — perguntas específicas ao cargo, feedback instantâneo (texto e voz) e scorecards personalizados.</p>
+              <p><a href="https://acinginterviews.com/" target="_blank" rel="noopener">Visitar o site →</a></p>
+            </div>
+          </article>
+        </div>
+
+        <p class="section-sub" style="margin-top:32px">Visão Computacional — trabalhos publicados</p>
+
+        <div class="projects">
+          <article class="project">
+            <img src="images/Captura%20de%20tela%202026-05-24%20221434.png" alt="Fish Behaviour Detection"/>
+            <div class="project-body">
+              <h3>Fish Behaviour Detection</h3>
+              <p>Análise de movimento e comportamento de peixes via Python, Jupyter e processamento de vídeo. Repositório com notebooks e scripts.</p>
+              <p><a href="https://github.com/marciosferreira/fish_behaviour_detection" target="_blank" rel="noopener">Ver no GitHub →</a></p>
+            </div>
+          </article>
+
+          <article class="project">
+            <img src="images/Captura%20de%20tela%202026-05-24%20222134.png" alt="Artigo Bioinformatics"/>
+            <div class="project-body">
+              <h3>Publicação — Bioinformatics (Oxford)</h3>
+              <p>Trabalho de análise e bioinformática publicado na revista <em>Bioinformatics</em> da Oxford Academic.</p>
+              <p><a href="https://academic.oup.com/bioinformatics/article/40/12/btae664/7885156" target="_blank" rel="noopener">Ler artigo →</a></p>
+            </div>
+          </article>
+        </div>
       </section>
 
       <footer class="footer">
-        <p>Interessado em colaborar? Entre em contato: <a href="mailto:marciosferreira@yahoo.com.br">marciosferreira@yahoo.com.br</a></p>
+        <p>Interessado em colaborar? <a href="mailto:marciosferreira@yahoo.com.br">marciosferreira@yahoo.com.br</a> · <a href="https://www.linkedin.com/in/marcio-soares-ferreira" target="_blank" rel="noopener">LinkedIn</a></p>
       </footer>
     </main>
   </body>
