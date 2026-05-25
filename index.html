@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Marcio Ferreira — Cientista de Dados & IA Agêntica</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script>
       mermaid.initialize({
@@ -397,7 +399,7 @@ graph TD
     <!-- Chat Widget -->
 <button id="chat-toggle" class="chat-toggle" type="button" aria-label="Abrir chat">
   <span class="chat-toggle-icon">💬</span>
-  <span class="chat-toggle-text">Pergunte sobre o Marcio</span>
+  <span class="chat-toggle-text">Pergunte sobre Marcio</span>
 </button>
 
 <div id="chat-panel" class="chat-panel" aria-hidden="true">
@@ -405,7 +407,7 @@ graph TD
     <div class="chat-header-info">
       <div class="chat-avatar">M</div>
       <div>
-        <div class="chat-title">Assistente do Marcio</div>
+        <div class="chat-title">Assistente de Marcio</div>
         <div class="chat-subtitle"><span class="chat-status-dot"></span> Online · responde por IA</div>
       </div>
     </div>
@@ -483,10 +485,30 @@ graph TD
           messages.scrollTop = messages.scrollHeight;
         }
 
+        function renderMarkdown(text) {
+          if (typeof marked === 'undefined' || typeof DOMPurify === 'undefined') {
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          }
+          const html = marked.parse(text, { breaks: true, gfm: true });
+          return DOMPurify.sanitize(html, { ADD_ATTR: ['target', 'rel'] });
+        }
+
+        function setMessageContent(el, role, text) {
+          if (role === 'model') {
+            el.innerHTML = renderMarkdown(text);
+            el.querySelectorAll('a').forEach(a => {
+              a.setAttribute('target', '_blank');
+              a.setAttribute('rel', 'noopener');
+            });
+          } else {
+            el.textContent = text;
+          }
+        }
+
         function addMessage(role, text) {
           const el = document.createElement('div');
           el.className = 'chat-msg chat-msg-' + role;
-          el.textContent = text;
+          setMessageContent(el, role, text);
           messages.appendChild(el);
           scrollToBottom();
           return el;
@@ -565,7 +587,7 @@ graph TD
                       modelEl = addMessage('model', '');
                     }
                     fullText += data.text;
-                    modelEl.textContent = fullText;
+                    setMessageContent(modelEl, 'model', fullText);
                     scrollToBottom();
                   }
                 } catch (err) {
