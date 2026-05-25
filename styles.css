@@ -571,6 +571,18 @@ a:hover { text-decoration: underline }
   flex-shrink: 0;
 }
 
+@media (max-width: 640px) {
+  .project {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .project img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/10;
+  }
+}
+
 .project-body h3 { margin: 0 0 6px; font-size: 14px }
 .project-body p  { margin: 4px 0; color: var(--muted); font-size: 13px }
 .project-body a  { font-size: 13px; font-weight: 600 }
