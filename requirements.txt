@@ -1,3 +1,5 @@
 fastapi
 uvicorn
 aiofiles
+google-genai
+python-dotenv

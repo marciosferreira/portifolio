@@ -394,7 +394,38 @@ graph TD
       </footer>
     </main>
 
-    <!-- Modal: Grafo ampliado -->
+    <!-- Chat Widget -->
+<button id="chat-toggle" class="chat-toggle" type="button" aria-label="Abrir chat">
+  <span class="chat-toggle-icon">💬</span>
+  <span class="chat-toggle-text">Pergunte sobre o Marcio</span>
+</button>
+
+<div id="chat-panel" class="chat-panel" aria-hidden="true">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-avatar">M</div>
+      <div>
+        <div class="chat-title">Assistente do Marcio</div>
+        <div class="chat-subtitle"><span class="chat-status-dot"></span> Online · responde por IA</div>
+      </div>
+    </div>
+    <button id="chat-close" class="chat-close" type="button" aria-label="Fechar chat">×</button>
+  </div>
+  <div id="chat-messages" class="chat-messages"></div>
+  <form id="chat-form" class="chat-form" autocomplete="off">
+    <input
+      id="chat-input"
+      class="chat-input"
+      type="text"
+      placeholder="Pergunte sobre experiência, projetos, stack…"
+      autocomplete="off"
+      maxlength="500"
+    />
+    <button type="submit" class="chat-send" aria-label="Enviar">→</button>
+  </form>
+</div>
+
+<!-- Modal: Grafo ampliado -->
     <div id="mermaid-modal" class="mermaid-modal" onclick="_closeMermaidModalBackdrop(event)">
       <div class="mermaid-modal-box">
         <div class="mermaid-modal-header">
@@ -433,6 +464,140 @@ graph TD
           _closeMermaidModal();
         }
       });
+
+      // Chat Widget — Gemini-powered CV assistant
+      (function() {
+        const toggle = document.getElementById('chat-toggle');
+        const panel = document.getElementById('chat-panel');
+        const closeBtn = document.getElementById('chat-close');
+        const messages = document.getElementById('chat-messages');
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('chat-input');
+        if (!toggle || !panel) return;
+
+        const history = [];
+        let greeted = false;
+        let sending = false;
+
+        function scrollToBottom() {
+          messages.scrollTop = messages.scrollHeight;
+        }
+
+        function addMessage(role, text) {
+          const el = document.createElement('div');
+          el.className = 'chat-msg chat-msg-' + role;
+          el.textContent = text;
+          messages.appendChild(el);
+          scrollToBottom();
+          return el;
+        }
+
+        function addTyping() {
+          const el = document.createElement('div');
+          el.className = 'chat-msg chat-msg-model chat-typing';
+          el.innerHTML = '<span></span><span></span><span></span>';
+          messages.appendChild(el);
+          scrollToBottom();
+          return el;
+        }
+
+        function openPanel() {
+          panel.classList.add('open');
+          panel.setAttribute('aria-hidden', 'false');
+          toggle.classList.add('hidden');
+          if (!greeted) {
+            greeted = true;
+            setTimeout(() => {
+              addMessage('model', 'Olá! Tem alguma pergunta sobre o background do Marcio? Posso falar sobre experiência, projetos, stack técnica ou publicações.');
+            }, 300);
+          }
+          setTimeout(() => input.focus(), 350);
+        }
+
+        function closePanel() {
+          panel.classList.remove('open');
+          panel.setAttribute('aria-hidden', 'true');
+          toggle.classList.remove('hidden');
+        }
+
+        toggle.addEventListener('click', openPanel);
+        closeBtn.addEventListener('click', closePanel);
+
+        async function send(question) {
+          if (sending) return;
+          sending = true;
+          addMessage('user', question);
+          history.push({ role: 'user', text: question });
+          const typing = addTyping();
+
+          let modelEl = null;
+          let fullText = '';
+
+          try {
+            const res = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ question, history: history.slice(0, -1) })
+            });
+            if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const payload = line.slice(6).trim();
+                if (payload === '[DONE]') continue;
+                try {
+                  const data = JSON.parse(payload);
+                  if (data.error) throw new Error(data.error);
+                  if (data.text) {
+                    if (!modelEl) {
+                      typing.remove();
+                      modelEl = addMessage('model', '');
+                    }
+                    fullText += data.text;
+                    modelEl.textContent = fullText;
+                    scrollToBottom();
+                  }
+                } catch (err) {
+                  if (err instanceof SyntaxError) continue;
+                  throw err;
+                }
+              }
+            }
+
+            if (!modelEl) {
+              typing.remove();
+              addMessage('model', 'Não consegui gerar uma resposta agora. Tente novamente em instantes.');
+            } else {
+              history.push({ role: 'model', text: fullText });
+            }
+          } catch (err) {
+            typing.remove();
+            addMessage('model', 'Erro ao conectar com o assistente. Verifique sua conexão ou contate marciosferreira@yahoo.com.br diretamente.');
+            console.error(err);
+          } finally {
+            sending = false;
+          }
+        }
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const q = input.value.trim();
+          if (!q || sending) return;
+          input.value = '';
+          send(q);
+        });
+      })();
 
       // Graph sidebar — scroll-spy + smooth scroll
       (function() {
