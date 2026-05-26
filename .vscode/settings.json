@@ -2,6 +2,7 @@
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
   "python.terminal.activateEnvironment": true,
   "python.terminal.activateEnvInCurrentTerminal": true,
+  "code-runner.runInTerminal": true,
   "code-runner.executorMap": {
     "python": "c:\\Users\\mnsmferr\\projects\\portifolio\\.venv\\Scripts\\python.exe -u"
   }

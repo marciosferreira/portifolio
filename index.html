@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <script>
       mermaid.initialize({
-        startOnLoad: true,
+        startOnLoad: false,
         theme: 'dark',
         securityLevel: 'loose',
         flowchart: { nodeSpacing: 30, rankSpacing: 50, curve: 'basis' },
@@ -315,68 +315,63 @@
 graph TD
     User["Usuário"]
 
-    User --> Orch
-
-    subgraph Orch[Orquestrador]
-        OT["⚡ LLM decide qual tool chamar<br/>-----------------------------<br/>data e hora · calcular período · buscar contexto<br/>delegar análise · exportar PDF · exportar Excel<br/>gerenciar agenda · ver código de tarefa<br/>criar tarefa agendada · editar tarefa agendada"]
+    subgraph Orch["Orquestrador"]
+        OT["🤖 Orquestrador (LLM)"]
     end
 
-    Orch -- "resposta em texto<br/>via SSE / chat" --> User
-    Orch -- "delega análise" --> ANA
-    ANA -- "texto · gráficos · PDF · Excel" --> Orch
-    Orch -- "listar / pausar / deletar" --> SCH
-    
-    subgraph ANA[Sub-Agente Analista]
-        AT["⚡ LLM decide qual tool chamar<br/>-----------------------------<br/>ler instruções da skill · buscar dados via API<br/>consultar SQL · analisar dados<br/>exportar PDF · exportar Excel<br/>coleta contexto estruturado para agendamento<br/>(skill · endpoint · colunas · amostra · tipo de saída)"]
+    User --> OT
+    OT -->|resposta via chat| User
+
+    subgraph ANA["Sub-Agente Analista"]
+        AT["🔍 Analista ReAct (LLM)"]
     end
 
-    subgraph SG["SchedulingGraph (StateGraph determinístico)"]
-        SG1["⚡ criar tarefa<br/>(infere nome, frequência e horário via LLM<br/>registra no banco)"] -- "consultar dados" --> SG2["consultar dados<br/>(aciona o Analista · coleta dados reais da API)"]
-        SG2 -- "gerar código" --> SG_G["⚡ gerar código<br/>(LLM escreve o script da tarefa<br/>com base nos dados reais)"]
-        SG_G -- "testar código" --> SG3["testar código<br/>(executa em ambiente isolado)"]
-        SG_E["⚡ editar código<br/>(LLM lê o script atual<br/>e aplica a modificação)"] -- "testar código" --> SG3
-        SG3 -- "erro · até 3 tentativas" --> SG4["⚡ corrigir código<br/>(LLM corrige com base no erro real<br/>remove imports bloqueados)"]
-        SG4 -- "retestar" --> SG3
-        SG3 -- "sucesso" --> SG5["salvar código<br/>(versiona e persiste no banco)"]
-        SG5 -- "retornar resultado" --> SG6["retornar resultado<br/>(devolve confirmação ao Orquestrador)"]
+    OT -->|delega analise| AT
+    AT -->|dados e relatorios| OT
+
+    subgraph SCH["Sub-Agente Scheduling"]
+        ST["📅 Scheduler ReAct (LLM)"]
     end
 
-    subgraph SCH[Sub-Agente Scheduling]
-        ST["⚡ LLM decide qual tool chamar<br/>-----------------------------<br/>criar tarefa · editar tarefa<br/>excluir tarefa · pausar / retomar<br/>listar tarefas · definir instruções · ver instruções<br/>histórico de versões do código · restaurar versão"]
+    OT -->|gerencia agenda| ST
+
+    subgraph SG["SchedulingGraph (StateGraph)"]
+        SG1["⚡ Criar Tarefa (LLM)"]
+        SG2["✓ Consultar Dados"]
+        SG_G["⚡ Gerar Codigo (LLM)"]
+        SG3["✓ Testar Sandbox"]
+        SG_E["⚡ Editar Codigo (LLM)"]
+        SG4["⚡ Corrigir Codigo (LLM)"]
+        SG5["✓ Salvar SQLite"]
+        SG6["✓ Retornar Status"]
     end
 
-    OT -- "criar tarefa agendada" --> SG1
-    OT -- "editar tarefa agendada" --> SG_E
-    SG2 -- "coleta dados para o script" --> AT
-    AT -- "endpoint · colunas · amostra de dados" --> SG2
-    SG5 -- "persiste script versionado" --> DB[(mfg.db - SQLite)]
-    SCH -- "lê / escreve" --> DB
-    SG6 -- "confirmação" --> OT
+    SG1 -->|busca dados| SG2
+    SG2 -->|cria codigo| SG_G
+    SG_G -->|testa sandbox| SG3
+    SG_E -->|testa sandbox| SG3
+    SG3 -->|erro retry| SG4
+    SG4 -->|retestar| SG3
+    SG3 -->|sucesso| SG5
+    SG5 -->|concluido| SG6
 
-    DB -- "tarefa ativa com execução pendente" --> DAEMON
+    OT -->|criar agendamento| SG1
+    OT -->|editar agendamento| SG_E
+    SG2 -->|solicita analise| AT
+    AT -->|envia dados| SG2
 
-    subgraph DAEMON["Daemon (verifica a cada 60s)"]
-        RUNNER["executa tarefas agendadas<br/>em ambiente isolado e seguro"]
+    DB[("mfg.db - SQLite")]
+    SG5 -->|persiste script| DB
+    ST -->|CRUD banco| DB
+    SG6 -->|sucesso| OT
+
+    subgraph DAEMON["Daemon (60s)"]
+        RUNNER["⚙️ Daemon Runner"]
     end
 
-    DAEMON -- "registra execução" --> DB
-    RUNNER -- "gráficos · PDFs · Excel · e-mails · notificações" --> User
-
-    subgraph LEG["Legenda"]
-        L1["⚡ nó chama o LLM (borda amarela)"]
-        L2["nó determinístico (borda verde)"]
-        L3["⚡ sub-agente ReAct (fundo lilás · borda amarela)"]
-        L4["grafo de fluxo fixo (fundo verde · sequência predefinida)"]
-    end
-
-    classDef legend fill:#111827,stroke:#4ade80,stroke-width:1.5px,color:#9CA3AF,font-style:italic;
-    classDef legendllm fill:#111827,stroke:#facc15,stroke-width:2px,color:#9CA3AF,font-style:italic;
-    classDef legendagent fill:#312E81,stroke:#facc15,stroke-width:2px,color:#c4b5fd,font-style:italic;
-    classDef legendsg fill:#1e3a1e,stroke:#4ade80,stroke-width:1.5px,color:#bbf7d0,font-style:italic;
-    class L2 legend;
-    class L1 legendllm;
-    class L3 legendagent;
-    class L4 legendsg;
+    DB -->|executa pendente| RUNNER
+    RUNNER -->|registra log| DB
+    RUNNER -->|envia e-mails| User
 
     classDef default fill:#1E293B,stroke:#475569,stroke-width:1px,color:#F8FAFC;
     classDef agent fill:#312E81,stroke:#6366F1,stroke-width:1px,color:#E0E7FF;
@@ -386,12 +381,12 @@ graph TD
     classDef storage fill:#0F2027,stroke:#0EA5E9,stroke-width:1px,color:#7DD3FC;
     classDef daemon fill:#0c1a2e,stroke:#38BDF8,stroke-width:1.5px,color:#7DD3FC;
     classDef user fill:#1a2535,stroke:#38BDF8,stroke-width:2px,color:#E0F2FE,font-weight:bold;
-    class Orch,ANA,SCH agent;
+    
     class OT,AT,ST agentllm;
-    class SG,SG2,SG3,SG5,SG6 sg;
+    class SG2,SG3,SG5,SG6 sg;
     class SG1,SG_G,SG_E,SG4 sgllm;
     class DB storage;
-    class DAEMON daemon;
+    class RUNNER daemon;
     class User user;
               </div>
             </div>
@@ -851,6 +846,7 @@ graph TD
       })();
 
       // Switch Architecture tabs
+      let _mermaidRendered = false;
       function _switchArchTab(tabName) {
         document.querySelectorAll('.sec-arch-tab-btn').forEach(btn => {
           btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabName));
@@ -858,6 +854,15 @@ graph TD
         document.querySelectorAll('.tab-content').forEach(c => {
           c.classList.toggle('active', c.id === 'arch-tab-' + tabName);
         });
+        if (tabName === 'graph' && !_mermaidRendered) {
+          _mermaidRendered = true;
+          const nodes = document.querySelectorAll('#arch-tab-graph .mermaid');
+          if (typeof mermaid.run === 'function') {
+            mermaid.run({ nodes });
+          } else {
+            mermaid.init(undefined, nodes);
+          }
+        }
       }
 
       // Live Simulator Engine
