@@ -256,12 +256,16 @@ a:hover { text-decoration: underline }
 /* ── HEADER / ABOUT ─────────────────────────────────────────────────── */
 .site-header {
   padding: 48px 0 40px;
+  position: relative;
+  overflow: hidden;
 }
 
 .about-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 36px;
+  position: relative;
+  z-index: 5;
 }
 
 @media (min-width: 720px) {
@@ -341,6 +345,13 @@ a:hover { text-decoration: underline }
   padding: 20px;
 }
 
+.about-text {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+}
+
 .panel-label {
   font-size: 11px;
   letter-spacing: .1em;
@@ -388,17 +399,19 @@ a:hover { text-decoration: underline }
 }
 
 /* ── TIMELINE ───────────────────────────────────────────────────────── */
-.timeline { display: flex; flex-direction: column; gap: 0 }
+.timeline { display: flex; flex-direction: column; gap: 12px }
 
 .tl-item {
   display: grid;
   grid-template-columns: 1fr;
   gap: 6px;
-  padding: 24px 0;
-  border-top: 1px solid var(--border-section);
+  padding: 20px 24px;
+  margin: 0 -24px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
-
-.tl-item:first-child { border-top: none; }
 
 @media (min-width: 600px) {
   .tl-item { grid-template-columns: 160px 1fr; gap: 24px }
@@ -1120,3 +1133,614 @@ a:hover { text-decoration: underline }
   border-top: 1px solid var(--border);
   padding-top: 24px;
 }
+
+/* ── GLASSMORPHISM UPGRADE ──────────────────────────────────────────── */
+.project, .edu-item, .stack-panel, .terminal-boot, .arch-card, .chat-panel {
+  background: rgba(11, 18, 32, 0.55) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── GRAPH NAV PULSE ────────────────────────────────────────────────── */
+@keyframes navPulse {
+  0% { box-shadow: 0 0 0 0px rgba(110,231,183,0.4), 0 0 12px rgba(110,231,183,0.4); }
+  100% { box-shadow: 0 0 0 6px rgba(110,231,183,0), 0 0 12px rgba(110,231,183,0.4); }
+}
+.graph-nav li.active::before {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  animation: navPulse 1.8s infinite ease-out !important;
+}
+
+/* ── CHAT QUICK PROMPTS ─────────────────────────────────────────────── */
+.chat-quick-prompts {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px 10px;
+  background: rgba(10, 15, 28, 0.8);
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(110, 231, 183, 0.25) transparent;
+}
+
+.chat-quick-prompts::-webkit-scrollbar {
+  height: 3px;
+}
+
+.chat-quick-prompts::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-quick-prompts::-webkit-scrollbar-thumb {
+  background: rgba(110, 231, 183, 0.2);
+  border-radius: 99px;
+}
+
+.chat-quick-prompts::-webkit-scrollbar-thumb:hover {
+  background: rgba(110, 231, 183, 0.45);
+}
+
+.chat-quick-prompts::after {
+  content: '';
+  padding-right: 8px;
+}
+
+.chat-quick-prompts.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.chat-prompt-chip {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(110, 231, 183, 0.15);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s, transform .1s;
+  white-space: nowrap;
+}
+
+.chat-prompt-chip:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.chat-prompt-chip:active {
+  transform: scale(0.96);
+}
+
+/* ── SIMULADOR DE AGENTE (STATEGRAPH LIVE) ─────────────────────────── */
+.sim-container {
+  margin-top: 16px;
+  background: rgba(11, 18, 32, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sim-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.sim-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sim-selector label {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.sim-select {
+  background: #070b15;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 5px 10px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.sim-select:focus {
+  border-color: var(--accent);
+}
+
+.sim-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 420px;
+}
+
+@media (min-width: 800px) {
+  .sim-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Visual Node Graph */
+.sim-visual-graph {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 15, 28, 0.15);
+  border-right: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+@media (min-width: 800px) {
+  .sim-visual-graph {
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: none;
+  }
+}
+
+.sim-node {
+  background: #151e2e;
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.25s ease;
+  width: 175px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  z-index: 5;
+}
+
+.sim-node.active {
+  background: #064e3b;
+  border-color: var(--accent);
+  color: #a7f3d0;
+  box-shadow: 0 0 14px rgba(110, 231, 183, 0.3);
+  transform: scale(1.03);
+}
+
+.sim-node.active-error {
+  background: #7f1d1d;
+  border-color: #ef4444;
+  color: #fee2e2;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
+  transform: scale(1.03);
+}
+
+.sim-node.active-warning {
+  background: #78350f;
+  border-color: #f59e0b;
+  color: #fef3c7;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+  transform: scale(1.03);
+}
+
+.sim-node-start, .sim-node-end {
+  width: 80px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+.sim-node-start.active {
+  background: #0c1c38;
+  border-color: #38bdf8;
+  color: #bae6fd;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+
+.sim-node-end.active {
+  background: #064e3b;
+  border-color: var(--accent);
+  color: #a7f3d0;
+}
+
+.sim-arrow {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 2px 0;
+  transition: color 0.25s ease;
+  user-select: none;
+}
+
+.sim-arrow.active {
+  color: var(--accent);
+}
+
+.sim-arrow.active-error {
+  color: #ef4444;
+}
+
+.sim-row-nodes {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  margin: 2px 0;
+}
+
+.sim-branch-left, .sim-branch-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sim-subgraph-wrap {
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 6px 0;
+  background: rgba(255, 255, 255, 0.01);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 230px;
+  transition: all 0.25s ease;
+}
+
+.sim-subgraph-wrap.active {
+  border-color: rgba(110, 231, 183, 0.25);
+  background: rgba(110, 231, 183, 0.01);
+}
+
+.subgraph-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.sim-loop-error-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+.sim-loop-error-wrap.show {
+  height: 42px;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+.sim-node-healing {
+  width: 120px;
+  font-size: 11px;
+  padding: 6px 10px;
+}
+
+.sim-arrow-left, .sim-arrow-up {
+  font-size: 11px;
+  color: #ef4444;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sim-arrow-up {
+  color: #f59e0b;
+}
+
+/* Terminal Console */
+.sim-terminal {
+  background: #05080f;
+  display: flex;
+  flex-direction: column;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.sim-terminal-header {
+  background: rgba(15, 23, 42, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sim-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.sim-dot.red { background: #ef4444; }
+.sim-dot.yellow { background: #f59e0b; }
+.sim-dot.green { background: #10b981; }
+
+.sim-terminal-title {
+  font-size: 10px;
+  color: var(--muted);
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+.sim-terminal-body {
+  flex: 1;
+  padding: 14px;
+  font-size: 12.0px;
+  line-height: 1.55;
+  overflow-y: auto;
+  max-height: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  scrollbar-width: thin;
+}
+
+.sim-terminal-placeholder {
+  color: #334155;
+  font-style: italic;
+}
+
+/* Log Coloring */
+.log-line {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.log-line .t-cyan { color: #38bdf8; }   /* tool call */
+.log-line .t-green { color: #34d399; }  /* agent node */
+.log-line .t-yellow { color: #fbbf24; } /* warning / retry */
+.log-line .t-red { color: #f87171; }    /* error / trace */
+.log-line .t-muted { color: #475569; }  /* debug */
+.log-line .t-white { color: #e2e8f0; }  /* standard content */
+.log-line .t-success { color: #a7f3d0; font-weight: 600; }
+
+/* Tabs system */
+.sec-arch-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 6px;
+}
+
+.sec-arch-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all .2s;
+}
+
+.sec-arch-tab-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sec-arch-tab-btn.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ── HERO INTERACTIVE CANVAS BACKGROUND ─────────────────────────────── */
+.hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ── MCP EXPLORER DASHBOARD ─────────────────────────────────────────── */
+.mcp-container {
+  margin-top: 16px;
+  background: rgba(11, 18, 32, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mcp-servers-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 18px;
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+}
+
+.mcp-server-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all .2s;
+}
+
+.mcp-server-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.mcp-server-btn.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-color: rgba(110, 231, 183, 0.25);
+}
+
+.mcp-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 400px;
+}
+
+@media (min-width: 800px) {
+  .mcp-grid {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+.mcp-input-panel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 15, 28, 0.1);
+  border-right: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 800px) {
+  .mcp-input-panel {
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: none;
+  }
+}
+
+.mcp-console-panel {
+  background: #05080f;
+  display: flex;
+  flex-direction: column;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mcp-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin: 0 0 6px;
+}
+
+.mcp-desc-text {
+  color: var(--text);
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.mcp-code-editor {
+  width: 100%;
+  height: 130px;
+  background: #070b15;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #a7f3d0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 10px;
+  resize: none;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.mcp-code-editor:focus {
+  border-color: var(--accent);
+}
+
+.mcp-console-body {
+  flex: 1;
+  padding: 18px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #a7f3d0;
+  overflow-y: auto;
+  max-height: 380px;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+}
+
+/* ── MOUSE FOLLOW GLOW BORDERS (MICRO-INTERACTIONS) ───────────────── */
+.project, .arch-card, .mcp-container, .sim-container, .stack-panel, .edu-item, .tl-item, .terminal-boot, .about-text {
+  position: relative;
+  overflow: hidden; /* Garante que a aura de luz não vaze para fora do card */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease, background 0.3s ease !important;
+}
+
+/* Iluminação sutil e elegante das bordas e sombras ao passar o mouse */
+.project:hover, .arch-card:hover, .mcp-container:hover, .sim-container:hover, .stack-panel:hover, .edu-item:hover, .tl-item:hover, .terminal-boot:hover, .about-text:hover {
+  border-color: rgba(110, 231, 183, 0.35) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(110, 231, 183, 0.04) !important;
+}
+
+/* Aura de luz Vercel-style que segue o cursor suavemente por trás dos textos */
+.project::before, .arch-card::before, .mcp-container::before, .sim-container::before, .stack-panel::before, .edu-item::before, .tl-item::before, .terminal-boot::before, .about-text::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+    rgba(110, 231, 183, 0.09), /* Tom mint-green sutil e elegante */
+    transparent 80%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1; /* Fica abaixo dos textos, mas acima do plano de fundo padrão */
+}
+
+/* Garante que os conteúdos fiquem legíveis e clicáveis em uma camada superior */
+.project-body, .sim-grid, .mcp-grid, .project img, .arch-card > *, .mcp-container > *, .stack-panel > *, .edu-item > *, .tl-meta, .tl-body, .terminal-boot > *, .about-text > * {
+  position: relative;
+  z-index: 2;
+}
+
+.project:hover::before, .arch-card:hover::before, .mcp-container:hover::before, .sim-container:hover::before, .stack-panel:hover::before, .edu-item:hover::before, .tl-item:hover::before, .terminal-boot:hover::before, .about-text:hover::before {
+  opacity: 1;
+}
+

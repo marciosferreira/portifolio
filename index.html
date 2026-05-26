@@ -41,6 +41,7 @@
         <a href="#sec-exp" class="topbar-link">experiência</a>
         <a href="#sec-edu" class="topbar-link topbar-link-optional">formação</a>
         <a href="#sec-arch" class="topbar-link">arquitetura</a>
+        <a href="#sec-mcp" class="topbar-link">mcp console</a>
         <a href="#sec-proj" class="topbar-link">projetos</a>
         <a href="#sec-videos" class="topbar-link">vídeos</a>
         <a href="mailto:marciosferreira@yahoo.com.br" class="topbar-cta">contato</a>
@@ -55,6 +56,7 @@
         <li data-section="sec-exp"><a href="#sec-exp">experiência</a></li>
         <li data-section="sec-edu"><a href="#sec-edu">formação</a></li>
         <li data-section="sec-arch"><a href="#sec-arch">arquitetura</a></li>
+        <li data-section="sec-mcp"><a href="#sec-mcp">mcp console</a></li>
         <li data-section="sec-proj"><a href="#sec-proj">projetos</a></li>
         <li data-section="sec-videos"><a href="#sec-videos">vídeos</a></li>
       </ul>
@@ -62,6 +64,7 @@
 
     <!-- ── ABOUT / HERO ──────────────────────────────────────────────── -->
     <header class="site-header" id="sec-about">
+      <canvas id="hero-canvas" class="hero-canvas"></canvas>
       <div class="container about-grid">
         <div class="about-text">
           <div class="terminal-boot" aria-hidden="true">
@@ -217,6 +220,7 @@
       </section>
 
       <!-- ── ARCHITECTURE ───────────────────────────────────────────── -->
+      <!-- ── ARCHITECTURE ───────────────────────────────────────────── -->
       <section class="section" id="sec-arch">
         <p class="about-label" style="margin-bottom:8px">Highlight · Projeto recente</p>
         <h2 class="section-title">Agente que automatiza o trabalho de gerentes de manufatura</h2>
@@ -228,10 +232,86 @@
           Demo ao vivo: <a href="https://interview-demo-industry.b60gda.easypanel.host/" target="_blank" rel="noopener">Industry Control →</a>
         </p>
 
-        <div class="arch-card" id="mermaid-graph-wrap" onclick="_openMermaidModal()" title="Clique para ampliar">
-          <div class="arch-zoom-hint">⤢ ampliar</div>
-          <div class="mermaid-wrap">
-            <div class="mermaid">
+        <!-- Tabs Navigation -->
+        <div class="sec-arch-tabs">
+          <button class="sec-arch-tab-btn active" onclick="_switchArchTab('sim')">🤖 Simulador de Agent Loop (Live)</button>
+          <button class="sec-arch-tab-btn" onclick="_switchArchTab('graph')">🗺️ Grafo de Arquitetura (Mermaid)</button>
+        </div>
+
+        <!-- ABA 1: SIMULATOR (Live) -->
+        <div id="arch-tab-sim" class="tab-content active">
+          <div class="sim-container">
+            <div class="sim-header">
+              <div class="sim-selector">
+                <label for="sim-scenario">Selecione uma tarefa industrial:</label>
+                <select id="sim-scenario" class="sim-select">
+                  <option value="oee">📊 Analisar OEE e alertar desvios</option>
+                  <option value="report">📝 Gerar relatório de paradas (PDF)</option>
+                  <option value="healing">🛠️ Agendar tarefa com Auto-Correção</option>
+                </select>
+              </div>
+              <button id="sim-start-btn" class="btn" style="padding: 6px 14px; font-size: 12.5px;">▶ Executar Agent Loop</button>
+            </div>
+            
+            <div class="sim-grid">
+              <!-- Visual Node Graph -->
+              <div class="sim-visual-graph">
+                <div class="sim-node sim-node-start active" id="sim-node-start">Start</div>
+                <div class="sim-arrow" id="sim-arrow-start-orch">↓</div>
+                <div class="sim-node" id="sim-node-orch">🤖 Orquestrador</div>
+                
+                <div class="sim-row-nodes">
+                  <div class="sim-branch-left">
+                    <div class="sim-arrow" id="sim-arrow-orch-analista">↙</div>
+                    <div class="sim-node" id="sim-node-analista">🔍 Analista (ReAct)</div>
+                  </div>
+                  <div class="sim-branch-right">
+                    <div class="sim-arrow" id="sim-arrow-orch-scheduler">↘</div>
+                    <div class="sim-node" id="sim-node-scheduler">📅 Scheduling (ReAct)</div>
+                  </div>
+                </div>
+                
+                <div class="sim-subgraph-wrap" id="sim-subgraph">
+                  <div class="subgraph-label">SchedulingGraph (StateGraph)</div>
+                  <div class="sim-node" id="sim-node-codegen">⚡ Gerar Código</div>
+                  <div class="sim-arrow" id="sim-arrow-codegen-test">↓</div>
+                  <div class="sim-node" id="sim-node-test">🧪 Testar Sandbox</div>
+                  
+                  <div class="sim-loop-error-wrap" id="sim-loop-error">
+                    <div class="sim-arrow-left">← Erro</div>
+                    <div class="sim-node sim-node-healing" id="sim-node-healing">🔧 Auto-Corrigir</div>
+                    <div class="sim-arrow-up">↑ Retry</div>
+                  </div>
+                </div>
+                
+                <div class="sim-arrow" id="sim-arrow-persist">↓</div>
+                <div class="sim-node" id="sim-node-db">💾 Banco SQLite</div>
+                <div class="sim-arrow" id="sim-arrow-end">↓</div>
+                <div class="sim-node sim-node-end" id="sim-node-end">End</div>
+              </div>
+              
+              <!-- Terminal Console -->
+              <div class="sim-terminal">
+                <div class="sim-terminal-header">
+                  <span class="sim-dot red"></span>
+                  <span class="sim-dot yellow"></span>
+                  <span class="sim-dot green"></span>
+                  <span class="sim-terminal-title">langgraph_agent_runtime.log</span>
+                </div>
+                <div class="sim-terminal-body" id="sim-terminal-body">
+                  <span class="sim-terminal-placeholder">> Selecione uma tarefa acima e clique em "Executar Agent Loop" para iniciar a simulação...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: MERMAID GRAPH -->
+        <div id="arch-tab-graph" class="tab-content">
+          <div class="arch-card" id="mermaid-graph-wrap" onclick="_openMermaidModal()" title="Clique para ampliar">
+            <div class="arch-zoom-hint">⤢ ampliar</div>
+            <div class="mermaid-wrap">
+              <div class="mermaid">
 graph TD
     User([Usuário])
 
@@ -310,6 +390,7 @@ graph TD
     class DB storage;
     class DAEMON daemon;
     class User user;
+              </div>
             </div>
           </div>
         </div>
@@ -320,6 +401,62 @@ graph TD
           com auto-correção de até 3 tentativas. Um <strong>Daemon</strong> verifica e executa as tarefas a cada 60s.
           Persistência em SQLite, streaming via SSE, observabilidade via Langfuse.
         </p>
+      </section>
+
+      <!-- ── MCP EXPLORER ───────────────────────────────────────────── -->
+      <section class="section" id="sec-mcp">
+        <p class="about-label" style="margin-bottom:8px">Interactive Playground · MCP Servers</p>
+        <h2 class="section-title">Model Context Protocol (MCP) Explorer</h2>
+        <p class="section-sub">
+          Explore os <strong>servidores MCP customizados em Python</strong> criados para orquestração.
+          Escolha um servidor abaixo, ajuste os parâmetros em JSON e simule uma chamada real recebida de modelos como Claude e Gemini pelo protocolo aberto.
+        </p>
+
+        <div class="mcp-container">
+          <!-- Server Selector Tabs -->
+          <div class="mcp-servers-tabs">
+            <button class="mcp-server-btn active" id="mcp-btn-db" onclick="_switchMcpServer('db')">🗄️ industrial_db_mcp</button>
+            <button class="mcp-server-btn" id="mcp-btn-sandbox" onclick="_switchMcpServer('sandbox')">💻 sandbox_code_mcp</button>
+            <button class="mcp-server-btn" id="mcp-btn-notifier" onclick="_switchMcpServer('notifier')">✉️ notifier_mcp</button>
+          </div>
+
+          <div class="mcp-grid">
+            <!-- Left Panel: Input & Schema -->
+            <div class="mcp-input-panel">
+              <div class="mcp-tool-select-wrapper">
+                <label for="mcp-tool-select" class="mcp-label">Selecione a Tool exposta pelo Servidor:</label>
+                <select id="mcp-tool-select" class="sim-select" onchange="_updateMcpTool()" style="width:100%; margin-top:4px; margin-bottom:12px;">
+                  <!-- Options updated by JS -->
+                </select>
+              </div>
+
+              <div class="mcp-tool-details" style="margin-top:4px;">
+                <p class="mcp-label">Descrição da Tool:</p>
+                <p id="mcp-tool-desc" class="mcp-desc-text" style="margin-bottom:12px;"></p>
+              </div>
+
+              <div class="mcp-schema-wrapper" style="margin-top:4px;">
+                <p class="mcp-label">Arguments JSON (Modificável):</p>
+                <textarea id="mcp-tool-args" class="mcp-code-editor" spellcheck="false"></textarea>
+              </div>
+
+              <button id="mcp-exec-btn" class="btn" style="width:100%; margin-top:16px; padding: 10px; font-size:13px;">▶ Executar Ferramenta via MCP</button>
+            </div>
+
+            <!-- Right Panel: Output Console -->
+            <div class="mcp-console-panel">
+              <div class="sim-terminal-header">
+                <span class="sim-dot red"></span>
+                <span class="sim-dot yellow"></span>
+                <span class="sim-dot green"></span>
+                <span class="sim-terminal-title">mcp_response_payload.json</span>
+              </div>
+              <div class="mcp-console-body" id="mcp-console-body">
+                <span class="sim-terminal-placeholder" style="color: #475569; font-style: italic;">// Selecione uma ferramenta ao lado e clique em "Executar Ferramenta via MCP" para simular a resposta de contexto...</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ── PROJECTS ───────────────────────────────────────────────── -->
@@ -433,6 +570,12 @@ graph TD
     </div>
   </div>
   <div id="chat-messages" class="chat-messages"></div>
+  <div id="chat-quick-prompts" class="chat-quick-prompts">
+    <button type="button" class="chat-prompt-chip" data-prompt="Como posso entrar em contato com o Marcio?">✉️ Contato</button>
+    <button type="button" class="chat-prompt-chip" data-prompt="Como o Marcio reduziu de 30-50% os tokens?">🪙 Token Reduction</button>
+    <button type="button" class="chat-prompt-chip" data-prompt="Quais são os projetos dele em LangGraph?">🤖 LangGraph</button>
+    <button type="button" class="chat-prompt-chip" data-prompt="Fale sobre a pesquisa dele no EMBL-EBI em Cambridge.">🇬🇧 Cambridge</button>
+  </div>
   <form id="chat-form" class="chat-form" autocomplete="off">
     <input
       id="chat-input"
@@ -493,6 +636,7 @@ graph TD
         const closeBtn = document.getElementById('chat-close');
         const expandBtn = document.getElementById('chat-expand');
         const messages = document.getElementById('chat-messages');
+        const quickPrompts = document.getElementById('chat-quick-prompts');
         const form = document.getElementById('chat-form');
         const input = document.getElementById('chat-input');
         if (!toggle || !panel) return;
@@ -572,9 +716,21 @@ graph TD
           scrollToBottom();
         });
 
+        if (quickPrompts) {
+          quickPrompts.querySelectorAll('.chat-prompt-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const text = btn.getAttribute('data-prompt');
+              if (text && !sending) {
+                send(text);
+              }
+            });
+          });
+        }
+
         async function send(question) {
           if (sending) return;
           sending = true;
+          if (quickPrompts) quickPrompts.classList.add('disabled');
           addMessage('user', question);
           history.push({ role: 'user', text: question });
           const typing = addTyping();
@@ -636,6 +792,7 @@ graph TD
             console.error(err);
           } finally {
             sending = false;
+            if (quickPrompts) quickPrompts.classList.remove('disabled');
           }
         }
 
@@ -686,6 +843,625 @@ graph TD
               e.preventDefault();
               target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+          });
+        });
+      })();
+
+      // Switch Architecture tabs
+      function _switchArchTab(tabName) {
+        document.querySelectorAll('.sec-arch-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabName));
+        });
+        document.querySelectorAll('.tab-content').forEach(c => {
+          c.classList.toggle('active', c.id === 'arch-tab-' + tabName);
+        });
+      }
+
+      // Live Simulator Engine
+      (function() {
+        const startBtn = document.getElementById('sim-start-btn');
+        const scenarioSelect = document.getElementById('sim-scenario');
+        const terminal = document.getElementById('sim-terminal-body');
+        
+        if (!startBtn || !scenarioSelect || !terminal) return;
+
+        let running = false;
+        let timerIds = [];
+
+        const SCENARIOS = {
+          oee: [
+            { node: 'sim-node-start', text: 'Iniciando thread de execução: a2_c4_b1_oee...', type: 'debug' },
+            { node: 'sim-node-start', text: 'Entrando no StateGraph com o input: { "task": "Analisar OEE da fábrica FIT e alertar se menor que 75%" }', type: 'info' },
+            { node: 'sim-node-orch', text: '➔ [Node: Orchestrator] Ativado.', type: 'node' },
+            { node: 'sim-node-orch', text: 'Orquestrador analisando ferramentas disponíveis via model call: gemini-3.5-flash.', type: 'debug' },
+            { node: 'sim-node-orch', text: 'Decisão do LLM: Delegar a análise ad-hoc para o analista, pois exige acesso a tabelas de métricas estruturadas.', type: 'debug' },
+            { node: 'sim-node-orch', text: 'Chamando ferramenta: delegate_to_analista(query="calcular OEE atual e histórico")', type: 'tool' },
+            { node: 'sim-node-analista', text: '➔ [Node: Analista] Ativado.', type: 'node' },
+            { node: 'sim-node-analista', text: 'Analista executando query SQL no banco industrial FIT...', type: 'debug' },
+            { node: 'sim-node-analista', text: 'Query: SELECT timestamp, oee, stop_time FROM telemetry_oee ORDER BY timestamp DESC LIMIT 10;', type: 'tool' },
+            { node: 'sim-node-analista', text: 'Métricas recuperadas: OEE Atual = 72.4% (Abaixo do limite de 75%), Tempo de parada = 45 min.', type: 'debug' },
+            { node: 'sim-node-analista', text: 'Gerando resposta formatada e gráfico de tendência OEE em memória.', type: 'debug' },
+            { node: 'sim-node-analista', text: 'Retornando dados para o Orquestrador.', type: 'debug' },
+            { node: 'sim-node-orch', text: '➔ [Node: Orchestrator] Ativado com o retorno do Analista.', type: 'node' },
+            { node: 'sim-node-orch', text: 'Orquestrador detectou OEE (72.4%) abaixo da meta de 75.0%. Decidindo enviar alertas.', type: 'debug' },
+            { node: 'sim-node-orch', text: 'Chamando ferramenta: send_manager_notification(message="ALERTA: OEE em 72.4% no FIT. Paradas não planejadas de 45m detectadas.")', type: 'tool' },
+            { node: 'sim-node-orch', text: 'Notificação despachada com sucesso via ctx.notify() / Email.', type: 'success' },
+            { node: 'sim-node-db', text: '➔ [Node: Persistência DB] Atualizando estado no SQLite.', type: 'node' },
+            { node: 'sim-node-db', text: 'INSERT INTO execution_logs (thread_id, task, status) VALUES ("oee_t1", "Análise de OEE", "completed");', type: 'tool' },
+            { node: 'sim-node-end', text: '➔ [Node: End] Loop finalizado com sucesso.', type: 'success' },
+            { node: 'sim-node-end', text: 'Resultado final: Relatório gerado, Notificação de OEE crítica (72.4%) disparada para o Gerente.', type: 'success' }
+          ],
+          report: [
+            { node: 'sim-node-start', text: 'Iniciando thread de execução: r1_d9_b3_report...', type: 'debug' },
+            { node: 'sim-node-start', text: 'Entrando no StateGraph com o input: { "task": "Gerar relatório completo de paradas da última semana e exportar em PDF" }', type: 'info' },
+            { node: 'sim-node-orch', text: '➔ [Node: Orchestrator] Ativado.', type: 'node' },
+            { node: 'sim-node-orch', text: 'LLM decide utilizar o sub-agente Analista para consolidar os logs históricos.', type: 'debug' },
+            { node: 'sim-node-orch', text: 'Chamando ferramenta: delegate_to_analista(query="compilar tabela de paradas da última semana")', type: 'tool' },
+            { node: 'sim-node-analista', text: '➔ [Node: Analista] Ativado.', type: 'node' },
+            { node: 'sim-node-analista', text: 'Executando busca semântica em logs de manutenção não estruturados com FAISS embeddings...', type: 'tool' },
+            { node: 'sim-node-analista', text: 'FAISS: Retornados 4 registros de paradas relacionados a falha mecânica e calibração de sensores.', type: 'debug' },
+            { node: 'sim-node-analista', text: 'Consolidando dados das paradas em tabela estruturada (Dataframe).', type: 'debug' },
+            { node: 'sim-node-analista', text: 'Chamando ferramenta: export_pdf_report(dataframe=stop_events, filename="relatorio_paradas_semanal.pdf")', type: 'tool' },
+            { node: 'sim-node-analista', text: 'Relatório PDF criado com sucesso na Sandbox em 1.4 segundos.', type: 'success' },
+            { node: 'sim-node-analista', text: 'Retornando caminho do PDF para o Orquestrador.', type: 'debug' },
+            { node: 'sim-node-orch', text: '➔ [Node: Orchestrator] Ativado.', type: 'node' },
+            { node: 'sim-node-orch', text: 'Orquestrador preparando link de download temporário.', type: 'debug' },
+            { node: 'sim-node-db', text: '➔ [Node: Persistência DB] Gravando registro de download no banco SQLite.', type: 'node' },
+            { node: 'sim-node-db', text: 'INSERT INTO downloads (file_path, type) VALUES ("sandbox://relatorio_paradas_semanal.pdf", "pdf");', type: 'node' },
+            { node: 'sim-node-end', text: '➔ [Node: End] Loop finalizado com sucesso.', type: 'success' },
+            { node: 'sim-node-end', text: 'Resultado final: PDF gerado com sucesso. Link: [relatorio_paradas_semanal.pdf](sandbox://relatorio_paradas_semanal.pdf)', type: 'success' }
+          ],
+          healing: [
+            { node: 'sim-node-start', text: 'Iniciando thread de execução: h1_c9_b1_auto_correct...', type: 'debug' },
+            { node: 'sim-node-start', text: 'Entrando no StateGraph com o input: { "task": "Agendar tarefa diária de consolidação de telemetria FIT" }', type: 'info' },
+            { node: 'sim-node-orch', text: '➔ [Node: Orchestrator] Ativado.', type: 'node' },
+            { node: 'sim-node-orch', text: 'Decisão do LLM: Acionar o sub-agente Scheduling para registrar a tarefa recorrente.', type: 'debug' },
+            { node: 'sim-node-orch', text: 'Chamando ferramenta: delegate_to_scheduling(action="criar_tarefa", freq="daily")', type: 'tool' },
+            { node: 'sim-node-scheduler', text: '➔ [Node: Scheduling] Ativado.', type: 'node' },
+            { node: 'sim-node-scheduler', text: 'Acionando o orquestrador interno do SchedulingGraph...', type: 'debug' },
+            
+            { node: 'sim-node-codegen', text: '➔ [SchedulingGraph ➔ Node: Gerar Código] Iniciado.', type: 'node-sub' },
+            { node: 'sim-node-codegen', text: 'LLM escrevendo script de consolidação Python autônomo baseado no schema do FIT.', type: 'debug' },
+            { node: 'sim-node-codegen', text: 'Script gerado: "import fit_api; data = fit_api.get_telemetry(); print(data)"', type: 'debug' },
+            
+            { node: 'sim-node-test', text: '➔ [SchedulingGraph ➔ Node: Testar Sandbox] Executando testes unitários isolados...', type: 'node-sub-error' },
+            { node: 'sim-node-test', text: 'ERRO detectado na Sandbox: ModuleNotFoundError: No module named \'fit_api\'', type: 'error' },
+            { node: 'sim-node-test', text: 'Testes falharam (Tentativa 1 de 3). Encaminhando log de erro para auto-correção.', type: 'error' },
+            
+            { node: 'sim-node-healing', text: '➔ [SchedulingGraph ➔ Node: Auto-Corrigir] Ativado para self-healing.', type: 'node-sub-warning' },
+            { node: 'sim-node-healing', text: 'LLM analisando o erro. Motivo: Módulo de API incorreto no sandbox isolado.', type: 'debug' },
+            { node: 'sim-node-healing', text: 'LLM gerando patch: substituindo \'fit_api\' pelo cliente HTTP genérico nativo.', type: 'debug' },
+            { node: 'sim-node-healing', text: 'Retentando execução da versão corrigida na Sandbox.', type: 'debug' },
+            
+            { node: 'sim-node-test', text: '➔ [SchedulingGraph ➔ Node: Testar Sandbox] Re-executando testes unitários isolados...', type: 'node-sub' },
+            { node: 'sim-node-test', text: 'Sandbox stdout: "Telemetria consolidada: 1,420 registros processados. OK."', type: 'success' },
+            { node: 'sim-node-test', text: 'Execução de teste OK na Sandbox.', type: 'success' },
+            
+            { node: 'sim-node-db', text: '➔ [Node: Persistência DB] Salvando script versionado e agendamento diário no SQLite.', type: 'node' },
+            { node: 'sim-node-db', text: 'INSERT INTO schedule (task_name, cron, script_version) VALUES ("consolidate_telemetry", "0 0 * * *", 2);', type: 'tool' },
+            { node: 'sim-node-end', text: '➔ [Node: End] SchedulingGraph concluído.', type: 'success' },
+            { node: 'sim-node-end', text: 'Resultado final: Agendamento diário ativo. Código corrigido em tempo de execução e salvo na versão 2 no SQLite.', type: 'success' }
+          ]
+        };
+
+        function resetGraphNodes() {
+          document.querySelectorAll('.sim-node, .sim-arrow, .sim-subgraph-wrap').forEach(el => {
+            el.classList.remove('active', 'active-error', 'active-warning');
+          });
+          document.getElementById('sim-loop-error').classList.remove('show');
+        }
+
+        function appendLog(text, type) {
+          const p = document.createElement('p');
+          p.className = 'log-line';
+          
+          let prefix = '';
+          let spanClass = 't-white';
+
+          if (type === 'node') {
+            spanClass = 't-green';
+          } else if (type === 'node-sub') {
+            spanClass = 't-green';
+          } else if (type === 'node-sub-error') {
+            spanClass = 't-red';
+          } else if (type === 'node-sub-warning') {
+            spanClass = 't-yellow';
+          } else if (type === 'debug') {
+            spanClass = 't-muted';
+            prefix = '[DEBUG] ';
+          } else if (type === 'info') {
+            spanClass = 't-cyan';
+            prefix = '[START] ';
+          } else if (type === 'tool') {
+            spanClass = 't-cyan';
+            prefix = '[TOOL] ';
+          } else if (type === 'error') {
+            spanClass = 't-red';
+            prefix = '[ERROR] ';
+          } else if (type === 'success') {
+            spanClass = 't-success';
+            prefix = '[SUCCESS] ';
+          }
+
+          p.innerHTML = `<span class="t-muted">${new Date().toLocaleTimeString()}</span> <span class="${spanClass}">${prefix}${text}</span>`;
+          terminal.appendChild(p);
+          terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function runSimulation() {
+          if (running) return;
+          running = true;
+          startBtn.disabled = true;
+          startBtn.textContent = '⏱ Executando...';
+          
+          timerIds.forEach(clearTimeout);
+          timerIds = [];
+
+          resetGraphNodes();
+          terminal.innerHTML = '';
+
+          const scenario = scenarioSelect.value;
+          const steps = SCENARIOS[scenario];
+          let currentStep = 0;
+
+          function executeNextStep() {
+            if (currentStep >= steps.length) {
+              running = false;
+              startBtn.disabled = false;
+              startBtn.textContent = '▶ Executar Agent Loop';
+              return;
+            }
+
+            const step = steps[currentStep];
+            appendLog(step.text, step.type);
+
+            if (step.node) {
+              const nodeEl = document.getElementById(step.node);
+              if (nodeEl) {
+                if (step.node === 'sim-node-start') {
+                  resetGraphNodes();
+                  nodeEl.classList.add('active');
+                } else if (step.node === 'sim-node-orch') {
+                  resetGraphNodes();
+                  document.getElementById('sim-node-start').classList.add('active');
+                  document.getElementById('sim-arrow-start-orch').classList.add('active');
+                  nodeEl.classList.add('active');
+                } else if (step.node === 'sim-node-analista') {
+                  resetGraphNodes();
+                  document.getElementById('sim-node-orch').classList.add('active');
+                  document.getElementById('sim-arrow-orch-analista').classList.add('active');
+                  nodeEl.classList.add('active');
+                } else if (step.node === 'sim-node-scheduler') {
+                  resetGraphNodes();
+                  document.getElementById('sim-node-orch').classList.add('active');
+                  document.getElementById('sim-arrow-orch-scheduler').classList.add('active');
+                  nodeEl.classList.add('active');
+                } else if (step.node === 'sim-node-codegen') {
+                  resetGraphNodes();
+                  document.getElementById('sim-node-scheduler').classList.add('active');
+                  document.getElementById('sim-subgraph').classList.add('active');
+                  nodeEl.classList.add('active');
+                } else if (step.node === 'sim-node-test') {
+                  document.getElementById('sim-node-codegen').classList.add('active');
+                  document.getElementById('sim-arrow-codegen-test').classList.add('active');
+                  
+                  if (step.type === 'node-sub-error') {
+                    nodeEl.classList.remove('active');
+                    nodeEl.classList.add('active-error');
+                    document.getElementById('sim-arrow-codegen-test').classList.remove('active');
+                    document.getElementById('sim-arrow-codegen-test').classList.add('active-error');
+                  } else {
+                    nodeEl.classList.remove('active-error');
+                    nodeEl.classList.add('active');
+                    document.getElementById('sim-arrow-codegen-test').classList.add('active');
+                    document.getElementById('sim-arrow-codegen-test').classList.remove('active-error');
+                  }
+                } else if (step.node === 'sim-node-healing') {
+                  document.getElementById('sim-loop-error').classList.add('show');
+                  nodeEl.classList.add('active-warning');
+                } else if (step.node === 'sim-node-db') {
+                  resetGraphNodes();
+                  document.getElementById('sim-arrow-persist').classList.add('active');
+                  nodeEl.classList.add('active');
+                } else if (step.node === 'sim-node-end') {
+                  resetGraphNodes();
+                  document.getElementById('sim-node-db').classList.add('active');
+                  document.getElementById('sim-arrow-end').classList.add('active');
+                  nodeEl.classList.add('active');
+                }
+              }
+            }
+
+            currentStep++;
+            let delay = 1000;
+            if (step.type === 'debug') delay = 600;
+            if (step.type === 'tool') delay = 1200;
+            if (step.type === 'error') delay = 1400;
+            if (step.type === 'success') delay = 1100;
+            
+            const tid = setTimeout(executeNextStep, delay);
+            timerIds.push(tid);
+          }
+
+          executeNextStep();
+        }
+
+        startBtn.addEventListener('click', runSimulation);
+      })();
+
+      // Hero Particle Canvas Network
+      (function() {
+        const canvas = document.getElementById('hero-canvas');
+        const header = document.getElementById('sec-about');
+        if (!canvas || !header) return;
+
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = header.offsetWidth;
+        let height = canvas.height = header.offsetHeight;
+
+        const particles = [];
+        const maxParticles = window.innerWidth < 768 ? 20 : 50;
+        const connectionDist = 110;
+        const mouse = { x: null, y: null, radius: 150 };
+
+        class Particle {
+          constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.35;
+            this.vy = (Math.random() - 0.5) * 0.35;
+            this.radius = Math.random() * 2 + 1;
+            this.color = Math.random() > 0.4 ? 'rgba(110, 231, 183, 0.35)' : 'rgba(129, 140, 248, 0.25)';
+          }
+
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+
+            if (mouse.x !== null && mouse.y !== null) {
+              const dx = mouse.x - this.x;
+              const dy = mouse.y - this.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < mouse.radius) {
+                const force = (mouse.radius - dist) / mouse.radius;
+                this.x -= dx * force * 0.015;
+                this.y -= dy * force * 0.015;
+              }
+            }
+          }
+
+          draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+          }
+        }
+
+        for (let i = 0; i < maxParticles; i++) {
+          particles.push(new Particle());
+        }
+
+        window.addEventListener('resize', () => {
+          width = canvas.width = header.offsetWidth;
+          height = canvas.height = header.offsetHeight;
+        });
+
+        header.addEventListener('mousemove', (e) => {
+          const rect = header.getBoundingClientRect();
+          mouse.x = e.clientX - rect.left;
+          mouse.y = e.clientY - rect.top;
+        });
+
+        header.addEventListener('mouseleave', () => {
+          mouse.x = null;
+          mouse.y = null;
+        });
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+
+          particles.forEach(p => {
+            p.update();
+            p.draw();
+          });
+
+          for (let i = 0; i < particles.length; i++) {
+            const p1 = particles[i];
+            
+            for (let j = i + 1; j < particles.length; j++) {
+              const p2 = particles[j];
+              const dx = p1.x - p2.x;
+              const dy = p1.y - p2.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+
+              if (dist < connectionDist) {
+                const alpha = (1 - dist / connectionDist) * 0.12;
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = `rgba(110, 231, 183, ${alpha})`;
+                ctx.lineWidth = 0.55;
+                ctx.stroke();
+              }
+            }
+
+            if (mouse.x !== null && mouse.y !== null) {
+              const dx = p1.x - mouse.x;
+              const dy = p1.y - mouse.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < mouse.radius) {
+                const alpha = (1 - dist / mouse.radius) * 0.15;
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(mouse.x, mouse.y);
+                ctx.strokeStyle = `rgba(110, 231, 183, ${alpha})`;
+                ctx.lineWidth = 0.75;
+                ctx.stroke();
+              }
+            }
+          }
+
+          requestAnimationFrame(animate);
+        }
+
+        animate();
+      })();
+
+      // Switch MCP Server and update UI
+      let _currentMcpServer = 'db';
+      const _mcpServers = {
+        db: {
+          name: 'industrial_db_mcp',
+          tools: [
+            {
+              name: 'query_oee_telemetry',
+              desc: 'Queries real-time production telemetry and OEE scores from FIT factory SQL database.',
+              args: {
+                line_id: "assembly_line_03",
+                timeframe_hours: 8,
+                include_downtime_details: true
+              },
+              response: {
+                status: "success",
+                server: "industrial_db_mcp",
+                results: {
+                  line_id: "assembly_line_03",
+                  oee_percentage: 72.4,
+                  metrics: {
+                    availability: 0.85,
+                    performance: 0.92,
+                    quality: 0.98
+                  },
+                  downtime_events: [
+                    {
+                      reason: "Feed nozzle jam",
+                      duration_minutes: 45,
+                      impact: "critical"
+                    }
+                  ],
+                  timestamp: "2026-05-26T15:10:00Z"
+                }
+              }
+            },
+            {
+              name: 'get_machine_status',
+              desc: 'Retrieves current operation status, temperature, and RPM for a specific machine in the assembly line.',
+              args: {
+                machine_id: "robot_arm_a1",
+                sensor_logs: true
+              },
+              response: {
+                status: "active",
+                server: "industrial_db_mcp",
+                telemetry: {
+                  machine_id: "robot_arm_a1",
+                  state: "operational",
+                  temperature_c: 64.2,
+                  rpm: 1200,
+                  health_index: 0.94,
+                  last_maintenance: "2026-05-12"
+                }
+              }
+            }
+          ]
+        },
+        sandbox: {
+          name: 'sandbox_code_mcp',
+          tools: [
+            {
+              name: 'execute_python_script',
+              desc: 'Runs a custom Python script in an isolated and secure container sandbox. Auto-corrects imports and returns stdout/stderr.',
+              args: {
+                script: "import numpy as np\ndata = [12, 15, 14, 10]\nprint(f'Mean: {np.mean(data)}')",
+                timeout_seconds: 5
+              },
+              response: {
+                status: "completed",
+                server: "sandbox_code_mcp",
+                sandbox: {
+                  container_id: "sb_container_c9_b1",
+                  exit_code: 0,
+                  stdout: "Mean: 12.75\n",
+                  stderr: "",
+                  memory_peak_kb: 4120
+                }
+              }
+            },
+            {
+              name: 'get_sandbox_packages',
+              desc: 'Lists the pre-installed PIP packages available in the isolated sandbox execution environment.',
+              args: {},
+              response: {
+                status: "success",
+                server: "sandbox_code_mcp",
+                environment: {
+                  python_version: "3.11.4",
+                  packages: {
+                    numpy: "1.24.3",
+                    pandas: "2.0.2",
+                    scipy: "1.10.1",
+                    scikit_learn: "1.2.2",
+                    sqlite3: "native"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        notifier: {
+          name: 'notifier_mcp',
+          tools: [
+            {
+              name: 'send_alert_notification',
+              desc: 'Dispatches critical alerts and daily factory reports to plant managers via Email and dashboard notifications.',
+              args: {
+                level: "critical",
+                message: "ALERT: Assembly line 03 OEE has fallen to 72.4%. Nozzle jam resolved.",
+                channels: ["email", "push"]
+              },
+              response: {
+                status: "sent",
+                server: "notifier_mcp",
+                dispatch_logs: [
+                  {
+                    channel: "email",
+                    recipient: "plant_manager_manaus@fit.org.br",
+                    status: "delivered",
+                    message_id: "msg_email_88b_03a"
+                  },
+                  {
+                    channel: "push",
+                    recipient: "Manager App UID 0912",
+                    status: "delivered",
+                    message_id: "msg_push_09a_11f"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      };
+
+      function _switchMcpServer(serverKey) {
+        _currentMcpServer = serverKey;
+        
+        // Update tabs active state
+        document.querySelectorAll('.mcp-server-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.id === 'mcp-btn-' + serverKey);
+        });
+
+        // Update tools select dropdown options
+        const select = document.getElementById('mcp-tool-select');
+        if (select) {
+          select.innerHTML = '';
+          const server = _mcpServers[serverKey];
+          server.tools.forEach((t, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = `${t.name}()`;
+            select.appendChild(opt);
+          });
+        }
+        
+        _updateMcpTool();
+      }
+
+      function _updateMcpTool() {
+        const select = document.getElementById('mcp-tool-select');
+        const desc = document.getElementById('mcp-tool-desc');
+        const args = document.getElementById('mcp-tool-args');
+        
+        if (!select || !desc || !args) return;
+
+        const server = _mcpServers[_currentMcpServer];
+        const toolIndex = parseInt(select.value) || 0;
+        const tool = server.tools[toolIndex];
+
+        if (tool) {
+          desc.textContent = tool.desc;
+          args.value = JSON.stringify(tool.args, null, 2);
+        }
+      }
+
+      // MCP execution simulation
+      (function() {
+        const execBtn = document.getElementById('mcp-exec-btn');
+        const consoleBody = document.getElementById('mcp-console-body');
+        
+        if (!execBtn || !consoleBody) return;
+
+        let executing = false;
+
+        function runMcpSimulation() {
+          if (executing) return;
+          executing = true;
+          execBtn.disabled = true;
+          execBtn.textContent = '⚡ Comunicando via protocolo MCP...';
+
+          consoleBody.innerHTML = `<span class="t-muted">${new Date().toLocaleTimeString()} [MCP CLIENT] Initializing connection to mcp_host_client...</span>`;
+          
+          setTimeout(() => {
+            consoleBody.innerHTML += `<br/><span class="t-muted">${new Date().toLocaleTimeString()} [MCP CLIENT] Sending tool call request for tool '${document.getElementById('mcp-tool-select').options[document.getElementById('mcp-tool-select').selectedIndex].text.slice(0, -2)}' on server '${_mcpServers[_currentMcpServer].name}'...</span>`;
+            consoleBody.scrollTop = consoleBody.scrollHeight;
+          }, 600);
+
+          setTimeout(() => {
+            const editorArgs = document.getElementById('mcp-tool-args').value;
+            let parsedArgs = {};
+            try {
+              parsedArgs = JSON.parse(editorArgs);
+            } catch (err) {
+              consoleBody.innerHTML += `<br/><span class="t-red">${new Date().toLocaleTimeString()} [MCP CLIENT ERROR] Failed to parse input JSON arguments. Please verify format.</span>`;
+              consoleBody.scrollTop = consoleBody.scrollHeight;
+              executing = false;
+              execBtn.disabled = false;
+              execBtn.textContent = '▶ Executar Ferramenta via MCP';
+              return;
+            }
+
+            const server = _mcpServers[_currentMcpServer];
+            const toolIndex = parseInt(document.getElementById('mcp-tool-select').value) || 0;
+            const tool = server.tools[toolIndex];
+
+            consoleBody.innerHTML += `<br/><span class="t-muted">${new Date().toLocaleTimeString()} [MCP CLIENT] Connection response 200 OK. Parsing context payload data...</span><br/>`;
+            
+            const responseElement = document.createElement('pre');
+            responseElement.className = 'log-line';
+            responseElement.style.margin = '8px 0 0';
+            responseElement.style.color = '#34d399';
+            responseElement.textContent = JSON.stringify(tool.response, null, 2);
+            
+            consoleBody.appendChild(responseElement);
+            
+            consoleBody.innerHTML += `<br/><span class="t-success">${new Date().toLocaleTimeString()} [SUCCESS] Context successfully populated to model's prompt context.</span>`;
+            consoleBody.scrollTop = consoleBody.scrollHeight;
+
+            executing = false;
+            execBtn.disabled = false;
+            execBtn.textContent = '▶ Executar Ferramenta via MCP';
+          }, 1400);
+        }
+
+        execBtn.addEventListener('click', runMcpSimulation);
+
+        // Initialize with 'db' options on page load
+        _switchMcpServer('db');
+      })();
+
+      // Mouse Follow Glow Borders (Micro-interactions)
+      (function() {
+        const cards = document.querySelectorAll('.project, .arch-card, .mcp-container, .sim-container, .stack-panel, .edu-item, .tl-item, .terminal-boot, .about-text');
+        cards.forEach(card => {
+          card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
           });
         });
       })();
