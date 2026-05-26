@@ -313,57 +313,60 @@
             <div class="mermaid-wrap">
               <div class="mermaid">
 graph TD
-    User([Usuário])
+    User["Usuário"]
 
     User --> Orch
 
     subgraph Orch[Orquestrador]
-        OT["⚡ LLM decide qual tool chamar<br/>────────────────────────────<br/>data e hora · calcular período · buscar contexto<br/>delegar análise · exportar PDF · exportar Excel<br/>gerenciar agenda · ver código de tarefa<br/>criar tarefa agendada · editar tarefa agendada"]
+        OT["⚡ LLM decide qual tool chamar<br/>-----------------------------<br/>data e hora · calcular período · buscar contexto<br/>delegar análise · exportar PDF · exportar Excel<br/>gerenciar agenda · ver código de tarefa<br/>criar tarefa agendada · editar tarefa agendada"]
     end
 
-    Orch -->|"resposta em texto<br/>via SSE / chat"| User
-    Orch -->|"delega análise"| ANA
-    ANA -->|"texto · gráficos · PDF · Excel"| Orch
-    Orch -->|"listar / pausar / deletar"| SCH
+    Orch -- "resposta em texto<br/>via SSE / chat" --> User
+    Orch -- "delega análise" --> ANA
+    ANA -- "texto · gráficos · PDF · Excel" --> Orch
+    Orch -- "listar / pausar / deletar" --> SCH
+    
     subgraph ANA[Sub-Agente Analista]
-        AT["⚡ LLM decide qual tool chamar<br/>────────────────────────────<br/>ler instruções da skill · buscar dados via API<br/>consultar SQL · analisar dados<br/>exportar PDF · exportar Excel<br/>coleta contexto estruturado para agendamento<br/>(skill · endpoint · colunas · amostra · tipo de saída)"]
+        AT["⚡ LLM decide qual tool chamar<br/>-----------------------------<br/>ler instruções da skill · buscar dados via API<br/>consultar SQL · analisar dados<br/>exportar PDF · exportar Excel<br/>coleta contexto estruturado para agendamento<br/>(skill · endpoint · colunas · amostra · tipo de saída)"]
     end
 
-    subgraph SG["SchedulingGraph  ⟨StateGraph determinístico⟩"]
-        SG1["⚡ criar tarefa<br/>(infere nome, frequência e horário via LLM<br/>registra no banco)"] --> SG2["consultar dados<br/>(aciona o Analista · coleta dados reais da API)"]
-        SG2 --> SG_G["⚡ gerar código<br/>(LLM escreve o script da tarefa<br/>com base nos dados reais)"]
-        SG_G --> SG3["testar código<br/>(executa em ambiente isolado)"]
-        SG_E["⚡ editar código<br/>(LLM lê o script atual<br/>e aplica a modificação)"] --> SG3
-        SG3 -->|"erro · até 3 tentativas"| SG4["⚡ corrigir código<br/>(LLM corrige com base no erro real<br/>remove imports bloqueados)"]
-        SG4 --> SG3
-        SG3 -->|"ok"| SG5["salvar código<br/>(versiona e persiste no banco)"]
-        SG5 --> SG6["retornar resultado<br/>(devolve confirmação ao Orquestrador)"]
+    subgraph SG["SchedulingGraph (StateGraph determinístico)"]
+        SG1["⚡ criar tarefa<br/>(infere nome, frequência e horário via LLM<br/>registra no banco)"] -- "consultar dados" --> SG2["consultar dados<br/>(aciona o Analista · coleta dados reais da API)"]
+        SG2 -- "gerar código" --> SG_G["⚡ gerar código<br/>(LLM escreve o script da tarefa<br/>com base nos dados reais)"]
+        SG_G -- "testar código" --> SG3["testar código<br/>(executa em ambiente isolado)"]
+        SG_E["⚡ editar código<br/>(LLM lê o script atual<br/>e aplica a modificação)"] -- "testar código" --> SG3
+        SG3 -- "erro · até 3 tentativas" --> SG4["⚡ corrigir código<br/>(LLM corrige com base no erro real<br/>remove imports bloqueados)"]
+        SG4 -- "retestar" --> SG3
+        SG3 -- "sucesso" --> SG5["salvar código<br/>(versiona e persiste no banco)"]
+        SG5 -- "retornar resultado" --> SG6["retornar resultado<br/>(devolve confirmação ao Orquestrador)"]
     end
 
     subgraph SCH[Sub-Agente Scheduling]
-        ST["⚡ LLM decide qual tool chamar<br/>────────────────────────────<br/>criar tarefa · editar tarefa<br/>excluir tarefa · pausar / retomar<br/>listar tarefas · definir instruções · ver instruções<br/>histórico de versões do código · restaurar versão"]
+        ST["⚡ LLM decide qual tool chamar<br/>-----------------------------<br/>criar tarefa · editar tarefa<br/>excluir tarefa · pausar / retomar<br/>listar tarefas · definir instruções · ver instruções<br/>histórico de versões do código · restaurar versão"]
     end
 
-    OT -->|"criar tarefa agendada"| SG1
-    OT -->|"editar tarefa agendada"| SG_E
-    SG2 -->|"coleta dados para o script"| AT
-    AT -->|"endpoint · colunas · amostra de dados"| SG2
-    SG5 -->|"persiste script versionado"| DB[("mfg.db<br/>SQLite · persistência")]
-    SCH -->|lê / escreve| DB
-    SG6 -->|confirmação| OT
+    OT -- "criar tarefa agendada" --> SG1
+    OT -- "editar tarefa agendada" --> SG_E
+    SG2 -- "coleta dados para o script" --> AT
+    AT -- "endpoint · colunas · amostra de dados" --> SG2
+    SG5 -- "persiste script versionado" --> DB[(mfg.db - SQLite)]
+    SCH -- "lê / escreve" --> DB
+    SG6 -- "confirmação" --> OT
 
-    DB -->|"tarefa ativa com execução pendente"| DAEMON
+    DB -- "tarefa ativa com execução pendente" --> DAEMON
 
-    subgraph DAEMON["Daemon · verifica a cada 60s"]
+    subgraph DAEMON["Daemon (verifica a cada 60s)"]
         RUNNER["executa tarefas agendadas<br/>em ambiente isolado e seguro"]
     end
 
-    DAEMON -->|"registra execução e agenda próxima"| DB
-    RUNNER -->|"gráficos · PDFs · Excel<br/>alertas por e-mail<br/>notificações via ctx.notify()<br/>qualquer ctx.api()"| User
+    DAEMON -- "registra execução" --> DB
+    RUNNER -- "gráficos · PDFs · Excel · e-mails · notificações" --> User
 
     subgraph LEG["Legenda"]
-        L1["⚡ nó chama o LLM<br/>(borda amarela)"] ~~~ L2["nó determinístico<br/>(borda verde)"]
-        L3["⚡ sub-agente ReAct<br/>(fundo lilás · borda amarela)"] ~~~ L4["grafo de fluxo fixo<br/>(fundo verde · sequência predefinida)"]
+        L1["⚡ nó chama o LLM (borda amarela)"]
+        L2["nó determinístico (borda verde)"]
+        L3["⚡ sub-agente ReAct (fundo lilás · borda amarela)"]
+        L4["grafo de fluxo fixo (fundo verde · sequência predefinida)"]
     end
 
     classDef legend fill:#111827,stroke:#4ade80,stroke-width:1.5px,color:#9CA3AF,font-style:italic;
