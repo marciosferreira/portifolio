@@ -117,7 +117,7 @@ principais institutos de bioinformática do mundo.
 
 ---
 
-## Projetos em Destaque
+## Meus Projetos em Destaque
 
 ### 1. Industry Control — Demo Industry Dashboard
 
