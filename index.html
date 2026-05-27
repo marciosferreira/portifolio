@@ -403,12 +403,19 @@ graph TD
 
       <!-- ── MCP AGENT (LIVE) ──────────────────────────────────────── -->
       <section class="section" id="sec-mcp">
-        <p class="about-label" style="margin-bottom:8px">Live Demo · Servidor MCP Real + LLM</p>
+        <p class="about-label" style="margin-bottom:8px">Live Demo · Padrão MCP + LLM</p>
         <h2 class="section-title">MCP Agent — Demonstração Real</h2>
         <p class="section-sub">
-          Um <strong>servidor MCP Python real</strong> expõe 4 ferramentas industriais.
-          Digite uma pergunta (ou clique num chip) — o <strong>LLM decide qual tool chamar</strong>
+          4 ferramentas industriais expostas como MCP tools — o <strong>LLM decide qual chamar</strong>
           e com quais argumentos, o servidor executa e retorna dados dinâmicos de verdade.
+        </p>
+        <p class="section-sub" style="margin-top:10px; padding:12px 16px; background:rgba(251,191,36,0.06); border-left:3px solid rgba(251,191,36,0.4); border-radius:0 6px 6px 0; font-size:13px;">
+          <strong style="color:#fbbf24;">Nota sobre o transporte:</strong>
+          Um MCP server de produção comunica via <strong>stdin/stdout</strong> (processo separado) ou <strong>SSE/HTTP</strong>,
+          usando <strong>JSON-RPC 2.0</strong> — com handshake <code>initialize → list_tools → call_tool</code>.
+          Esse protocolo exige um host MCP (Claude Desktop, LangChain MCP client) e não é exposto diretamente ao browser.
+          O que este demo reproduz é a <strong>lógica central</strong>: o LLM lendo o schema das tools disponíveis
+          e decidindo autonomamente qual invocar — a parte arquiteturalmente relevante do MCP.
         </p>
 
         <div class="mcp-diff-grid">
