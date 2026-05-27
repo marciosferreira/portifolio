@@ -219,17 +219,19 @@
         </div>
       </section>
 
-      <!-- ── ARCHITECTURE ───────────────────────────────────────────── -->
+      <!-- ── DEMOS DIVIDER ─────────────────────────────────────────── -->
+      <div class="demos-divider">
+        <span class="demos-divider-badge">▸ demos &amp; sistemas em produção</span>
+      </div>
+
       <!-- ── ARCHITECTURE ───────────────────────────────────────────── -->
       <section class="section" id="sec-arch">
         <p class="about-label" style="margin-bottom:8px">Highlight · Projeto recente</p>
         <h2 class="section-title">Agente que automatiza o trabalho de gerentes de manufatura</h2>
         <p class="section-sub">
-          Construído com <strong>LangChain</strong> e <strong>LangGraph</strong>, este sistema substitui rotinas manuais de
-          gerentes industriais — análise de telemetria, geração de relatórios, agendamento de tarefas recorrentes e alertas —
-          por um <strong>orquestrador multi-agente</strong> que conversa em linguagem natural, escreve e versiona código
-          Python sob demanda, e executa tudo de forma autônoma em sandbox isolado.
-          Demo ao vivo: <a href="https://interview-demo-industry.b60gda.easypanel.host/" target="_blank" rel="noopener">Industry Control →</a>
+          Orquestrador multi-agente em <strong>LangGraph</strong> que substitui rotinas manuais de gerentes industriais.
+          Conversa em linguagem natural, escreve código Python sob demanda e executa de forma autônoma em sandbox isolado.
+          <a href="https://interview-demo-industry.b60gda.easypanel.host/" target="_blank" rel="noopener">Demo ao vivo →</a>
         </p>
 
         <!-- Tabs Navigation -->
@@ -392,52 +394,26 @@ graph TD
             </div>
           </div>
         </div>
-        <p class="arch-caption">
-          O <strong>Orquestrador</strong> roteia pedidos para dois sub-agentes ReAct — <strong>Analista</strong>
-          (análise ad-hoc, gráficos, PDFs, Excel) e <strong>Scheduling</strong> (CRUD de tarefas agendadas). Um
-          <strong>StateGraph determinístico</strong> escreve, testa em sandbox e versiona o código Python das tarefas,
-          com auto-correção de até 3 tentativas. Um <strong>Daemon</strong> verifica e executa as tarefas a cada 60s.
-          Persistência em SQLite, streaming via SSE, observabilidade via Langfuse.
-        </p>
+        <div style="margin-top:14px; text-align:right;">
+          <button class="mcp-info-btn" onclick="_openArchInfoModal()" title="Como a arquitetura funciona">
+            <span>?</span> Como funciona
+          </button>
+        </div>
       </section>
 
       <!-- ── MCP AGENT (LIVE) ──────────────────────────────────────── -->
       <section class="section" id="sec-mcp">
         <p class="about-label" style="margin-bottom:8px">Live Demo · Padrão MCP + LLM</p>
-        <h2 class="section-title">MCP Agent — Demonstração Real</h2>
-        <p class="section-sub">
+        <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+          <h2 class="section-title" style="margin:0;">MCP Agent — Demonstração Real</h2>
+          <button class="mcp-info-btn" onclick="_openMcpInfoModal()" title="O que é MCP? Como difere de uma API?">
+            <span>?</span> MCP vs API REST
+          </button>
+        </div>
+        <p class="section-sub" style="margin-top:10px;">
           4 ferramentas industriais expostas como MCP tools — o <strong>LLM decide qual chamar</strong>
           e com quais argumentos, o servidor executa e retorna dados dinâmicos de verdade.
         </p>
-        <p class="section-sub" style="margin-top:10px; padding:12px 16px; background:rgba(251,191,36,0.06); border-left:3px solid rgba(251,191,36,0.4); border-radius:0 6px 6px 0; font-size:13px;">
-          <strong style="color:#fbbf24;">Nota sobre o transporte:</strong>
-          Um MCP server de produção comunica via <strong>stdin/stdout</strong> (processo separado) ou <strong>SSE/HTTP</strong>,
-          usando <strong>JSON-RPC 2.0</strong> — com handshake <code>initialize → list_tools → call_tool</code>.
-          Esse protocolo exige um host MCP (Claude Desktop, LangChain MCP client) e não é exposto diretamente ao browser.
-          O que este demo reproduz é a <strong>lógica central</strong>: o LLM lendo o schema das tools disponíveis
-          e decidindo autonomamente qual invocar — a parte arquiteturalmente relevante do MCP.
-        </p>
-
-        <div class="mcp-diff-grid">
-          <div class="mcp-diff-col">
-            <p class="mcp-diff-label mcp-diff-label-api">API REST tradicional</p>
-            <ul class="mcp-diff-list">
-              <li>Quem chama é <strong>seu código</strong> — você escolhe o endpoint e monta a requisição</li>
-              <li>Schema documentado para humanos (OpenAPI, README)</li>
-              <li>Resposta vai para o <strong>seu código</strong>, que decide o que fazer com ela</li>
-              <li>Integração manual a cada novo modelo ou fluxo</li>
-            </ul>
-          </div>
-          <div class="mcp-diff-col mcp-diff-col-mcp">
-            <p class="mcp-diff-label mcp-diff-label-mcp">MCP Server</p>
-            <ul class="mcp-diff-list">
-              <li>Quem chama é o <strong>LLM</strong> — ele lê o schema e decide sozinho qual tool usar e com quais argumentos</li>
-              <li>Schema exposto em tempo de execução via <code>list_tools()</code>, legível por máquina</li>
-              <li>Resposta vai direto ao <strong>contexto do modelo</strong>, que gera a resposta final</li>
-              <li>Um servidor, qualquer modelo compatível (Claude, Gemini, GPT…)</li>
-            </ul>
-          </div>
-        </div>
 
         <div class="mcp-container">
           <!-- Query Chips -->
@@ -618,6 +594,74 @@ graph TD
   </form>
 </div>
 
+<!-- Modal: Arquitetura -->
+<div id="arch-info-modal" class="mermaid-modal" onclick="_closeArchInfoModalBackdrop(event)">
+  <div class="mermaid-modal-box" style="max-width:560px;">
+    <div class="mermaid-modal-header">
+      <span>Como a arquitetura funciona</span>
+      <button onclick="_closeArchInfoModal()" title="Fechar (Esc)">×</button>
+    </div>
+    <div style="padding:24px; overflow-y:auto; max-height:70vh; display:flex; flex-direction:column; gap:14px; font-size:13px; color:#cbd5e1; line-height:1.6;">
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:18px; flex-shrink:0;">🤖</span>
+        <p style="margin:0;"><strong style="color:#f8fafc;">Orquestrador</strong> — recebe a mensagem do usuário e roteia para dois sub-agentes ReAct: <strong>Analista</strong> (análise ad-hoc, gráficos, PDFs, Excel) e <strong>Scheduling</strong> (CRUD de tarefas agendadas).</p>
+      </div>
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:18px; flex-shrink:0;">⚡</span>
+        <p style="margin:0;"><strong style="color:#f8fafc;">StateGraph determinístico</strong> — quando uma tarefa é criada, um grafo de estados escreve o código Python, testa em sandbox isolado e versiona. Auto-correção de até 3 tentativas em caso de erro.</p>
+      </div>
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:18px; flex-shrink:0;">⚙️</span>
+        <p style="margin:0;"><strong style="color:#f8fafc;">Daemon</strong> — processo background que verifica o banco a cada 60s e executa as tarefas agendadas de forma autônoma, sem intervenção humana.</p>
+      </div>
+      <div style="display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:18px; flex-shrink:0;">💾</span>
+        <p style="margin:0;"><strong style="color:#f8fafc;">Infraestrutura</strong> — persistência em SQLite, respostas em streaming via SSE, observabilidade completa (tracing, evals) via Langfuse.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: MCP vs API -->
+<div id="mcp-info-modal" class="mermaid-modal" onclick="_closeMcpInfoModalBackdrop(event)">
+  <div class="mermaid-modal-box" style="max-width:660px;">
+    <div class="mermaid-modal-header">
+      <span>MCP Server vs API REST — qual a diferença?</span>
+      <button onclick="_closeMcpInfoModal()" title="Fechar (Esc)">×</button>
+    </div>
+    <div style="padding:24px; overflow-y:auto; max-height:70vh;">
+      <div class="mcp-diff-grid" style="margin:0 0 20px;">
+        <div class="mcp-diff-col">
+          <p class="mcp-diff-label mcp-diff-label-api">API REST tradicional</p>
+          <ul class="mcp-diff-list">
+            <li>Quem chama é <strong>seu código</strong> — você escolhe o endpoint e monta a requisição</li>
+            <li>Schema documentado para humanos (OpenAPI, README)</li>
+            <li>Resposta vai para o <strong>seu código</strong>, que decide o que fazer com ela</li>
+            <li>Integração manual a cada novo modelo ou fluxo</li>
+          </ul>
+        </div>
+        <div class="mcp-diff-col mcp-diff-col-mcp">
+          <p class="mcp-diff-label mcp-diff-label-mcp">MCP Server</p>
+          <ul class="mcp-diff-list">
+            <li>Quem chama é o <strong>LLM</strong> — ele lê o schema e decide sozinho qual tool usar e com quais argumentos</li>
+            <li>Schema exposto em tempo de execução via <code>list_tools()</code>, legível por máquina</li>
+            <li>Resposta vai direto ao <strong>contexto do modelo</strong>, que gera a resposta final</li>
+            <li>Um servidor, qualquer modelo compatível (Claude, Gemini, GPT…)</li>
+          </ul>
+        </div>
+      </div>
+      <div style="padding:12px 16px; background:rgba(251,191,36,0.06); border-left:3px solid rgba(251,191,36,0.4); border-radius:0 6px 6px 0; font-size:13px; color:#cbd5e1; line-height:1.6;">
+        <strong style="color:#fbbf24;">Nota sobre o transporte:</strong>
+        Um MCP server de produção comunica via <strong>stdin/stdout</strong> (processo separado, uso local)
+        ou <strong>SSE/HTTP</strong> (uso remoto/web), sempre com protocolo <strong>JSON-RPC 2.0</strong>
+        e handshake <code>initialize → list_tools → call_tool</code>.
+        Este demo reproduz a <strong>lógica central</strong> — o LLM decidindo autonomamente qual tool invocar —
+        sem o protocolo formal, pois stdio não é exposto diretamente ao browser.
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: Grafo ampliado -->
     <div id="mermaid-modal" class="mermaid-modal" onclick="_closeMermaidModalBackdrop(event)">
       <div class="mermaid-modal-box">
@@ -630,6 +674,40 @@ graph TD
     </div>
 
     <script>
+      function _openArchInfoModal() {
+        document.getElementById('arch-info-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      function _closeArchInfoModal() {
+        document.getElementById('arch-info-modal').style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      function _closeArchInfoModalBackdrop(e) {
+        if (e.target === document.getElementById('arch-info-modal')) _closeArchInfoModal();
+      }
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('arch-info-modal').style.display === 'flex') {
+          _closeArchInfoModal();
+        }
+      });
+
+      function _openMcpInfoModal() {
+        document.getElementById('mcp-info-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+      function _closeMcpInfoModal() {
+        document.getElementById('mcp-info-modal').style.display = 'none';
+        document.body.style.overflow = '';
+      }
+      function _closeMcpInfoModalBackdrop(e) {
+        if (e.target === document.getElementById('mcp-info-modal')) _closeMcpInfoModal();
+      }
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('mcp-info-modal').style.display === 'flex') {
+          _closeMcpInfoModal();
+        }
+      });
+
       function _openMermaidModal() {
         const modal = document.getElementById('mermaid-modal');
         const content = document.getElementById('mermaid-modal-content');
