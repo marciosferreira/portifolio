@@ -1577,6 +1577,66 @@ a:hover { text-decoration: underline }
   opacity: 0.85;
 }
 
+/* ── MCP DIFF GRID ───────────────────────────────────────────────────── */
+.mcp-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0 24px;
+}
+
+@media (max-width: 640px) {
+  .mcp-diff-grid { grid-template-columns: 1fr; }
+}
+
+.mcp-diff-col {
+  background: rgba(11, 18, 32, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.mcp-diff-col-mcp {
+  border-color: rgba(110, 231, 183, 0.2);
+  background: rgba(6, 24, 18, 0.5);
+}
+
+.mcp-diff-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 10px;
+}
+
+.mcp-diff-label-api  { color: var(--muted); }
+.mcp-diff-label-mcp  { color: var(--accent); }
+
+.mcp-diff-list {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.mcp-diff-list li {
+  font-size: 13px;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.45;
+}
+
+.mcp-diff-col-mcp .mcp-diff-list li {
+  color: #cbd5e1;
+}
+
+.mcp-diff-list li strong { color: var(--text); }
+.mcp-diff-col-mcp .mcp-diff-list li code {
+  color: #6ee7b7;
+  font-size: 11px;
+}
+
 /* ── MCP EXPLORER DASHBOARD ─────────────────────────────────────────── */
 .mcp-container {
   margin-top: 16px;

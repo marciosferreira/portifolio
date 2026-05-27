@@ -401,56 +401,80 @@ graph TD
         </p>
       </section>
 
-      <!-- ── MCP EXPLORER ───────────────────────────────────────────── -->
+      <!-- ── MCP AGENT (LIVE) ──────────────────────────────────────── -->
       <section class="section" id="sec-mcp">
-        <p class="about-label" style="margin-bottom:8px">Interactive Playground · MCP Servers</p>
-        <h2 class="section-title">Model Context Protocol (MCP) Explorer</h2>
+        <p class="about-label" style="margin-bottom:8px">Live Demo · Servidor MCP Real + LLM</p>
+        <h2 class="section-title">MCP Agent — Demonstração Real</h2>
         <p class="section-sub">
-          Explore os <strong>servidores MCP customizados em Python</strong> criados para orquestração.
-          Escolha um servidor abaixo, ajuste os parâmetros em JSON e simule uma chamada real recebida de modelos como Claude e Gemini pelo protocolo aberto.
+          Um <strong>servidor MCP Python real</strong> expõe 4 ferramentas industriais.
+          Digite uma pergunta (ou clique num chip) — o <strong>LLM decide qual tool chamar</strong>
+          e com quais argumentos, o servidor executa e retorna dados dinâmicos de verdade.
         </p>
 
+        <div class="mcp-diff-grid">
+          <div class="mcp-diff-col">
+            <p class="mcp-diff-label mcp-diff-label-api">API REST tradicional</p>
+            <ul class="mcp-diff-list">
+              <li>Quem chama é <strong>seu código</strong> — você escolhe o endpoint e monta a requisição</li>
+              <li>Schema documentado para humanos (OpenAPI, README)</li>
+              <li>Resposta vai para o <strong>seu código</strong>, que decide o que fazer com ela</li>
+              <li>Integração manual a cada novo modelo ou fluxo</li>
+            </ul>
+          </div>
+          <div class="mcp-diff-col mcp-diff-col-mcp">
+            <p class="mcp-diff-label mcp-diff-label-mcp">MCP Server</p>
+            <ul class="mcp-diff-list">
+              <li>Quem chama é o <strong>LLM</strong> — ele lê o schema e decide sozinho qual tool usar e com quais argumentos</li>
+              <li>Schema exposto em tempo de execução via <code>list_tools()</code>, legível por máquina</li>
+              <li>Resposta vai direto ao <strong>contexto do modelo</strong>, que gera a resposta final</li>
+              <li>Um servidor, qualquer modelo compatível (Claude, Gemini, GPT…)</li>
+            </ul>
+          </div>
+        </div>
+
         <div class="mcp-container">
-          <!-- Server Selector Tabs -->
+          <!-- Query Chips -->
           <div class="mcp-servers-tabs">
-            <button class="mcp-server-btn active" id="mcp-btn-db" onclick="_switchMcpServer('db')">🗄️ industrial_db_mcp</button>
-            <button class="mcp-server-btn" id="mcp-btn-sandbox" onclick="_switchMcpServer('sandbox')">💻 sandbox_code_mcp</button>
-            <button class="mcp-server-btn" id="mcp-btn-notifier" onclick="_switchMcpServer('notifier')">✉️ notifier_mcp</button>
+            <button class="mcp-server-btn" onclick="_fillMcpQuery('Qual o OEE da linha 2?')">📊 OEE linha 2</button>
+            <button class="mcp-server-btn" onclick="_fillMcpQuery('Qual o status do robô arm_a2?')">🤖 Robô a2</button>
+            <button class="mcp-server-btn" onclick="_fillMcpQuery('Qual linha tem o melhor OEE?')">🏆 Melhor linha</button>
+            <button class="mcp-server-btn" onclick="_fillMcpQuery('Quais linhas estão em estado crítico?')">🚨 Linhas críticas</button>
+            <button class="mcp-server-btn" onclick="_fillMcpQuery('Qual a temperatura do solda d2?')">🔥 Solda d2</button>
           </div>
 
           <div class="mcp-grid">
-            <!-- Left Panel: Input & Schema -->
+            <!-- Left Panel: Input -->
             <div class="mcp-input-panel">
-              <div class="mcp-tool-select-wrapper">
-                <label for="mcp-tool-select" class="mcp-label">Selecione a Tool exposta pelo Servidor:</label>
-                <select id="mcp-tool-select" class="sim-select" onchange="_updateMcpTool()" style="width:100%; margin-top:4px; margin-bottom:12px;">
-                  <!-- Options updated by JS -->
-                </select>
-              </div>
+              <p class="mcp-label">Faça uma pergunta ao agente:</p>
+              <textarea id="mcp-agent-input" class="mcp-code-editor"
+                style="height:86px; margin-bottom:12px;"
+                spellcheck="false"
+                placeholder="Ex: Qual o OEE da linha 3 nas últimas 4 horas?"></textarea>
+              <button id="mcp-agent-btn" class="btn" style="width:100%; padding:10px; font-size:13px;">
+                ▶ Executar via MCP Agent
+              </button>
 
-              <div class="mcp-tool-details" style="margin-top:4px;">
-                <p class="mcp-label">Descrição da Tool:</p>
-                <p id="mcp-tool-desc" class="mcp-desc-text" style="margin-bottom:12px;"></p>
+              <div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.06);">
+                <p class="mcp-label">Tools expostas pelo servidor MCP:</p>
+                <div style="display:flex; flex-direction:column; gap:7px; margin-top:4px;">
+                  <code style="font-size:11px; color:#6ee7b7;">query_oee_telemetry(line_id, timeframe_hours)</code>
+                  <code style="font-size:11px; color:#6ee7b7;">get_machine_status(machine_id)</code>
+                  <code style="font-size:11px; color:#6ee7b7;">list_production_lines()</code>
+                  <code style="font-size:11px; color:#6ee7b7;">send_alert(message, level)</code>
+                </div>
               </div>
-
-              <div class="mcp-schema-wrapper" style="margin-top:4px;">
-                <p class="mcp-label">Arguments JSON (Modificável):</p>
-                <textarea id="mcp-tool-args" class="mcp-code-editor" spellcheck="false"></textarea>
-              </div>
-
-              <button id="mcp-exec-btn" class="btn" style="width:100%; margin-top:16px; padding: 10px; font-size:13px;">▶ Executar Ferramenta via MCP</button>
             </div>
 
-            <!-- Right Panel: Output Console -->
+            <!-- Right Panel: Console -->
             <div class="mcp-console-panel">
               <div class="sim-terminal-header">
                 <span class="sim-dot red"></span>
                 <span class="sim-dot yellow"></span>
                 <span class="sim-dot green"></span>
-                <span class="sim-terminal-title">mcp_response_payload.json</span>
+                <span class="sim-terminal-title">mcp_agent_runtime.log</span>
               </div>
-              <div class="mcp-console-body" id="mcp-console-body">
-                <span class="sim-terminal-placeholder" style="color: #475569; font-style: italic;">// Selecione uma ferramenta ao lado e clique em "Executar Ferramenta via MCP" para simular a resposta de contexto...</span>
+              <div class="mcp-console-body" id="mcp-agent-body">
+                <span style="color:#475569; font-style:italic;">// Clique num chip ou escreva uma pergunta e pressione "Executar via MCP Agent"…</span>
               </div>
             </div>
           </div>
@@ -1219,9 +1243,9 @@ graph TD
         animate();
       })();
 
-      // Switch MCP Server and update UI
-      let _currentMcpServer = 'db';
-      const _mcpServers = {
+      // ── MCP AGENT (real server) ──────────────────────────────────────────
+      const _mcpServers = { // kept only to satisfy any stale reference — not used
+
         db: {
           name: 'industrial_db_mcp',
           tools: [
@@ -1395,69 +1419,112 @@ graph TD
         }
       }
 
-      // MCP execution simulation
+      // MCP Agent — real server
+      function _fillMcpQuery(text) {
+        const input = document.getElementById('mcp-agent-input');
+        if (input) { input.value = text; input.focus(); }
+      }
+
       (function() {
-        const execBtn = document.getElementById('mcp-exec-btn');
-        const consoleBody = document.getElementById('mcp-console-body');
-        
-        if (!execBtn || !consoleBody) return;
+        const btn         = document.getElementById('mcp-agent-btn');
+        const input       = document.getElementById('mcp-agent-input');
+        const consoleBody = document.getElementById('mcp-agent-body');
+        if (!btn || !input || !consoleBody) return;
 
-        let executing = false;
+        let running = false;
 
-        function runMcpSimulation() {
-          if (executing) return;
-          executing = true;
-          execBtn.disabled = true;
-          execBtn.textContent = '⚡ Comunicando via protocolo MCP...';
-
-          consoleBody.innerHTML = `<span class="t-muted">${new Date().toLocaleTimeString()} [MCP CLIENT] Initializing connection to mcp_host_client...</span>`;
-          
-          setTimeout(() => {
-            consoleBody.innerHTML += `<br/><span class="t-muted">${new Date().toLocaleTimeString()} [MCP CLIENT] Sending tool call request for tool '${document.getElementById('mcp-tool-select').options[document.getElementById('mcp-tool-select').selectedIndex].text.slice(0, -2)}' on server '${_mcpServers[_currentMcpServer].name}'...</span>`;
-            consoleBody.scrollTop = consoleBody.scrollHeight;
-          }, 600);
-
-          setTimeout(() => {
-            const editorArgs = document.getElementById('mcp-tool-args').value;
-            let parsedArgs = {};
-            try {
-              parsedArgs = JSON.parse(editorArgs);
-            } catch (err) {
-              consoleBody.innerHTML += `<br/><span class="t-red">${new Date().toLocaleTimeString()} [MCP CLIENT ERROR] Failed to parse input JSON arguments. Please verify format.</span>`;
-              consoleBody.scrollTop = consoleBody.scrollHeight;
-              executing = false;
-              execBtn.disabled = false;
-              execBtn.textContent = '▶ Executar Ferramenta via MCP';
-              return;
-            }
-
-            const server = _mcpServers[_currentMcpServer];
-            const toolIndex = parseInt(document.getElementById('mcp-tool-select').value) || 0;
-            const tool = server.tools[toolIndex];
-
-            consoleBody.innerHTML += `<br/><span class="t-muted">${new Date().toLocaleTimeString()} [MCP CLIENT] Connection response 200 OK. Parsing context payload data...</span><br/>`;
-            
-            const responseElement = document.createElement('pre');
-            responseElement.className = 'log-line';
-            responseElement.style.margin = '8px 0 0';
-            responseElement.style.color = '#34d399';
-            responseElement.textContent = JSON.stringify(tool.response, null, 2);
-            
-            consoleBody.appendChild(responseElement);
-            
-            consoleBody.innerHTML += `<br/><span class="t-success">${new Date().toLocaleTimeString()} [SUCCESS] Context successfully populated to model's prompt context.</span>`;
-            consoleBody.scrollTop = consoleBody.scrollHeight;
-
-            executing = false;
-            execBtn.disabled = false;
-            execBtn.textContent = '▶ Executar Ferramenta via MCP';
-          }, 1400);
+        function ts() {
+          return `<span class="t-muted">${new Date().toLocaleTimeString()}</span>`;
+        }
+        function appendLine(html) {
+          const p = document.createElement('p');
+          p.className = 'log-line';
+          p.innerHTML = html;
+          consoleBody.appendChild(p);
+          consoleBody.scrollTop = consoleBody.scrollHeight;
+          return p;
+        }
+        function appendPre(obj) {
+          const pre = document.createElement('pre');
+          pre.className = 'log-line';
+          pre.style.cssText = 'margin:4px 0 8px;color:#34d399;font-size:11px;white-space:pre-wrap;word-break:break-all;';
+          pre.textContent = JSON.stringify(obj, null, 2);
+          consoleBody.appendChild(pre);
+          consoleBody.scrollTop = consoleBody.scrollHeight;
         }
 
-        execBtn.addEventListener('click', runMcpSimulation);
+        async function run() {
+          const query = input.value.trim();
+          if (!query || running) return;
+          running = true;
+          btn.disabled = true;
+          btn.textContent = '⚡ Chamando agente MCP...';
+          consoleBody.innerHTML = '';
 
-        // Initialize with 'db' options on page load
-        _switchMcpServer('db');
+          appendLine(`${ts()} <span class="t-muted">[MCP CLIENT] Conectando ao industrial_db_mcp...</span>`);
+
+          try {
+            const res = await fetch('/api/mcp/agent', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query })
+            });
+            if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+
+            const reader  = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let answerEl = null;
+            let fullAnswer = '';
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
+
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const payload = line.slice(6).trim();
+                if (payload === '[DONE]') continue;
+                try {
+                  const data = JSON.parse(payload);
+                  if (data.type === 'step') {
+                    appendLine(`${ts()} <span class="t-muted">[AGENT]  ${data.text}</span>`);
+                  } else if (data.type === 'tool_call') {
+                    appendLine(`${ts()} <span class="t-cyan">[LLM → MCP]  ${data.tool}(${JSON.stringify(data.args)})</span>`);
+                  } else if (data.type === 'tool_result') {
+                    appendLine(`${ts()} <span class="t-green">[MCP RESPONSE]</span>`);
+                    appendPre(data.result);
+                  } else if (data.type === 'answer_chunk') {
+                    if (!answerEl) {
+                      appendLine(`${ts()} <span class="t-success">[ANSWER]</span>`);
+                      answerEl = document.createElement('p');
+                      answerEl.className = 'log-line';
+                      answerEl.style.cssText = 'color:#f8fafc;margin-left:8px;line-height:1.55;white-space:pre-wrap;';
+                      consoleBody.appendChild(answerEl);
+                    }
+                    fullAnswer += data.text;
+                    answerEl.textContent = fullAnswer;
+                    consoleBody.scrollTop = consoleBody.scrollHeight;
+                  } else if (data.type === 'error') {
+                    appendLine(`${ts()} <span class="t-red">[ERROR]  ${data.text}</span>`);
+                  }
+                } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
+              }
+            }
+          } catch (err) {
+            appendLine(`${ts()} <span class="t-red">[ERROR]  ${err.message}</span>`);
+          } finally {
+            running = false;
+            btn.disabled = false;
+            btn.textContent = '▶ Executar via MCP Agent';
+          }
+        }
+
+        btn.addEventListener('click', run);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) run(); });
       })();
 
       // Mouse Follow Glow Borders (Micro-interactions)

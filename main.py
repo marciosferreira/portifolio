@@ -172,4 +172,234 @@ async def chat(req: ChatRequest):
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
+
+# ── MCP AGENT ────────────────────────────────────────────────────────────────
+
+MCP_TOOL_DEFS = {
+    "query_oee_telemetry": {
+        "description": "Queries OEE and production telemetry for a specific assembly line in the FIT factory.",
+        "parameters": {
+            "line_id": "string — e.g. assembly_line_01, assembly_line_02, assembly_line_03, assembly_line_04",
+            "timeframe_hours": "integer — hours of history to query (default 8)",
+        },
+    },
+    "get_machine_status": {
+        "description": "Returns current operational status, temperature and health index for a specific machine.",
+        "parameters": {
+            "machine_id": "string — e.g. robot_arm_a1, robot_arm_a2, conveyor_b1, press_c3, welder_d2",
+        },
+    },
+    "list_production_lines": {
+        "description": "Lists all production lines in the FIT factory with their current OEE and health status.",
+        "parameters": {},
+    },
+    "send_alert": {
+        "description": "Dispatches a critical alert notification to the plant manager.",
+        "parameters": {
+            "message": "string — alert message content",
+            "level": "string — severity: warning or critical",
+        },
+    },
+}
+
+_LINE_DATA = {
+    "assembly_line_01": {"oee": 89.2, "avail": 0.95, "perf": 0.96, "qual": 0.98, "downtime": 12, "issue": None},
+    "assembly_line_02": {"oee": 68.1, "avail": 0.78, "perf": 0.91, "qual": 0.96, "downtime": 47, "issue": "Feed nozzle jam — intermittent"},
+    "assembly_line_03": {"oee": 72.4, "avail": 0.85, "perf": 0.92, "qual": 0.98, "downtime": 45, "issue": "Sensor calibration drift"},
+    "assembly_line_04": {"oee": 95.1, "avail": 0.98, "perf": 0.97, "qual": 1.00, "downtime": 3,  "issue": None},
+}
+
+_MACHINE_DATA = {
+    "robot_arm_a1": {"state": "operational", "temp": 64.2,  "rpm": 1200, "health": 0.94, "note": None},
+    "robot_arm_a2": {"state": "maintenance", "temp": 0.0,   "rpm": 0,    "health": 0.42, "note": "Scheduled bearing replacement"},
+    "conveyor_b1":  {"state": "operational", "temp": 38.1,  "rpm": 450,  "health": 0.88, "note": None},
+    "press_c3":     {"state": "operational", "temp": 91.5,  "rpm": 320,  "health": 0.76, "note": "Temperature above threshold — monitor closely"},
+    "welder_d2":    {"state": "error",       "temp": 112.3, "rpm": 0,    "health": 0.21, "note": "Overheating fault — requires immediate intervention"},
+}
+
+
+def _execute_mcp_tool(name: str, args: dict) -> dict:
+    if name == "query_oee_telemetry":
+        line_id = args.get("line_id", "assembly_line_01")
+        hours = int(args.get("timeframe_hours", 8))
+        d = _LINE_DATA.get(line_id, {"oee": 70.0, "avail": 0.80, "perf": 0.90, "qual": 0.97, "downtime": 30, "issue": "Line not found"})
+        result: dict = {
+            "line_id": line_id,
+            "timeframe_hours": hours,
+            "oee_percentage": d["oee"],
+            "metrics": {"availability": d["avail"], "performance": d["perf"], "quality": d["qual"]},
+            "downtime_minutes": d["downtime"],
+            "status": "critical" if d["oee"] < 75 else "normal",
+            "timestamp": "2026-05-26T15:10:00Z",
+        }
+        if d["issue"]:
+            result["active_issue"] = d["issue"]
+        return result
+
+    if name == "get_machine_status":
+        machine_id = args.get("machine_id", "robot_arm_a1")
+        d = _MACHINE_DATA.get(machine_id, {"state": "unknown", "temp": 0, "rpm": 0, "health": 0, "note": "Machine not found"})
+        result = {
+            "machine_id": machine_id,
+            "state": d["state"],
+            "temperature_c": d["temp"],
+            "rpm": d["rpm"],
+            "health_index": d["health"],
+            "last_maintenance": "2026-05-12",
+        }
+        if d["note"]:
+            result["alert"] = d["note"]
+        return result
+
+    if name == "list_production_lines":
+        return {
+            "factory": "FIT — Manaus",
+            "lines": [
+                {"id": k, "oee_percentage": v["oee"], "status": "critical" if v["oee"] < 75 else "normal", "downtime_minutes": v["downtime"]}
+                for k, v in _LINE_DATA.items()
+            ],
+            "summary": {
+                "total_lines": len(_LINE_DATA),
+                "lines_critical": sum(1 for v in _LINE_DATA.values() if v["oee"] < 75),
+                "avg_oee": round(sum(v["oee"] for v in _LINE_DATA.values()) / len(_LINE_DATA), 1),
+            },
+        }
+
+    if name == "send_alert":
+        import hashlib
+        msg = args.get("message", "")
+        level = args.get("level", "warning")
+        return {
+            "status": "sent",
+            "level": level,
+            "message": msg,
+            "recipients": ["plant_manager_manaus@fit.org.br", "ops_team@fit.org.br"],
+            "message_id": "msg_" + hashlib.md5(msg.encode()).hexdigest()[:8],
+            "timestamp": "2026-05-26T15:10:00Z",
+        }
+
+    return {"error": f"Tool '{name}' not found in MCP server"}
+
+
+_TOOL_SELECTOR_SYSTEM = (
+    "You are an MCP tool selector for an industrial factory assistant.\n\n"
+    "Available tools:\n"
+    + json.dumps(MCP_TOOL_DEFS, indent=2)
+    + """
+
+Given the user query, respond ONLY with a valid JSON object — no markdown, no explanation.
+
+If a tool should be called:
+{"tool": "tool_name", "args": {"param": "value"}}
+
+If no tool is needed:
+{"tool": null, "args": {}, "direct_answer": "your short answer"}
+
+Mapping rules:
+- "linha 1/2/3/4" or "line 1/2/3/4" → line_id: "assembly_line_01/02/03/04"
+- "robô/robot a1/a2", "conveyor b1", "press c3", "solda/welder d2" → matching machine_id
+- "best line", "worst line", "all lines", "overview", "critical" → list_production_lines
+- OEE / telemetry / production questions about a specific line → query_oee_telemetry
+- Machine / temperature / status / RPM questions → get_machine_status
+- Send / alert / notify → send_alert
+"""
+)
+
+_FINAL_ANSWER_SYSTEM = (
+    "You are a concise industrial MCP agent assistant. "
+    "The user asked a factory question. You called an MCP tool and received real data. "
+    "Provide a clear answer in 2-3 sentences in the SAME LANGUAGE as the user question. "
+    "Be specific with numbers and status. Do not repeat the raw JSON."
+)
+
+
+class McpAgentRequest(BaseModel):
+    query: str
+
+
+@app.post("/api/mcp/agent")
+async def mcp_agent(req: McpAgentRequest):
+    query = (req.query or "").strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="Query vazia.")
+
+    def event_stream():
+        try:
+            def emit(obj: dict) -> str:
+                return f"data: {json.dumps(obj)}\n\n"
+
+            yield emit({"type": "step", "text": "Analisando query e selecionando ferramenta MCP..."})
+
+            decision_resp = client.models.generate_content(
+                model=MODEL_ID,
+                contents=[types.Content(role="user", parts=[types.Part(text=query)])],
+                config=types.GenerateContentConfig(
+                    system_instruction=_TOOL_SELECTOR_SYSTEM,
+                    temperature=0.1,
+                    max_output_tokens=400,
+                    thinking_config=types.ThinkingConfig(thinking_level="minimal"),
+                ),
+            )
+
+            raw = (decision_resp.text or "").strip()
+            if raw.startswith("```"):
+                raw = raw.split("```")[1]
+                if raw.startswith("json"):
+                    raw = raw[4:]
+            raw = raw.strip()
+
+            try:
+                decision = json.loads(raw)
+            except json.JSONDecodeError:
+                yield emit({"type": "error", "text": f"LLM retornou resposta inválida: {raw[:120]}"})
+                yield "data: [DONE]\n\n"
+                return
+
+            tool_name = decision.get("tool")
+            tool_args = decision.get("args", {})
+
+            if not tool_name:
+                direct = decision.get("direct_answer", "Não consegui processar a query.")
+                yield emit({"type": "answer_chunk", "text": direct})
+                yield "data: [DONE]\n\n"
+                return
+
+            yield emit({"type": "tool_call", "tool": tool_name, "args": tool_args})
+            yield emit({"type": "step", "text": f"Executando {tool_name} no servidor MCP..."})
+
+            tool_result = _execute_mcp_tool(tool_name, tool_args)
+            yield emit({"type": "tool_result", "result": tool_result})
+            yield emit({"type": "step", "text": "Gerando resposta final com base no contexto MCP..."})
+
+            final_prompt = (
+                f"User question: {query}\n\n"
+                f"MCP tool called: {tool_name}\n"
+                f"Tool arguments: {json.dumps(tool_args)}\n"
+                f"Tool result:\n{json.dumps(tool_result, indent=2)}\n\n"
+                "Answer the user's question based on this data."
+            )
+
+            final_resp = client.models.generate_content(
+                model=MODEL_ID,
+                contents=[types.Content(role="user", parts=[types.Part(text=final_prompt)])],
+                config=types.GenerateContentConfig(
+                    system_instruction=_FINAL_ANSWER_SYSTEM,
+                    temperature=0.3,
+                    max_output_tokens=1000,
+                    thinking_config=types.ThinkingConfig(thinking_level="minimal"),
+                ),
+            )
+            answer_text = (final_resp.text or "").strip()
+            if answer_text:
+                yield emit({"type": "answer_chunk", "text": answer_text})
+
+            yield "data: [DONE]\n\n"
+
+        except Exception as exc:
+            yield f"data: {json.dumps({'type': 'error', 'text': str(exc)})}\n\n"
+            yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
 app.mount("/", StaticFiles(directory=".", html=True), name="static")
